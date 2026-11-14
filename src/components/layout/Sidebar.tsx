@@ -15,6 +15,7 @@ import {
   Sparkles,
   Shirt,
 } from 'lucide-react';
+import { useLanguage } from '../../lib/i18n';
 
 export type ActiveTab =
   | 'dashboard'
@@ -37,24 +38,26 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, shopName }) => {
+  const { tr, language } = useLanguage();
+
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'dashboard', label: tr('Dashboard'), icon: LayoutDashboard },
     {
       id: 'billing',
-      label: 'New Billing',
+      label: tr('New Billing'),
       icon: ShoppingCart,
       highlight: true,
     },
-    { id: 'sales', label: 'Sales History', icon: Receipt },
-    { id: 'products', label: 'Products', icon: Shirt },
-    { id: 'inventory', label: 'Inventory / Stock', icon: Layers },
-    { id: 'purchases', label: 'Purchase Entry', icon: ShoppingBag },
-    { id: 'suppliers', label: 'Suppliers', icon: Truck },
-    { id: 'customers', label: 'Customers', icon: Users },
-    { id: 'returns', label: 'Returns & Exchange', icon: RotateCcw },
-    { id: 'expenses', label: 'Expenses', icon: Wallet },
-    { id: 'reports', label: 'Reports & Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'sales', label: tr('Sales History'), icon: Receipt },
+    { id: 'products', label: tr('Products'), icon: Shirt },
+    { id: 'inventory', label: tr('Inventory / Stock'), icon: Layers },
+    { id: 'purchases', label: tr('Purchase Entry'), icon: ShoppingBag },
+    { id: 'suppliers', label: tr('Suppliers'), icon: Truck },
+    { id: 'customers', label: tr('Customers'), icon: Users },
+    { id: 'returns', label: tr('Returns & Exchange'), icon: RotateCcw },
+    { id: 'expenses', label: tr('Expenses'), icon: Wallet },
+    { id: 'reports', label: tr('Reports & Analytics'), icon: BarChart3 },
+    { id: 'settings', label: tr('Settings'), icon: Settings },
   ];
 
   return (
@@ -68,7 +71,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, shopN
           <h1 className="font-bold text-white text-base leading-tight truncate tracking-wide">
             {shopName}
           </h1>
-          <p className="text-[11px] text-blue-400 font-medium tracking-tight">Retail POS & Stock</p>
+          <p className="text-[11px] text-blue-400 font-medium tracking-tight">
+            {language === 'hi' ? 'कपड़ा बिलिंग व स्टॉक' : 'Retail POS & Stock'}
+          </p>
         </div>
       </div>
 

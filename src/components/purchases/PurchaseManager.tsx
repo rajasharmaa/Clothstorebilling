@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface PurchaseManagerProps {
   currentUser: User;
@@ -30,6 +31,7 @@ interface PurchaseManagerProps {
 }
 
 export const PurchaseManager: React.FC<PurchaseManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [purchases, setPurchases] = useState<Purchase[]>(StorageService.getPurchases());
   const [suppliers, setSuppliers] = useState<Supplier[]>(StorageService.getSuppliers());
   const [products, setProducts] = useState<Product[]>(StorageService.getProducts());
@@ -168,9 +170,11 @@ export const PurchaseManager: React.FC<PurchaseManagerProps> = ({ currentUser, s
             <ShoppingBag className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Purchase Inward & Goods Receipt</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'खरीदी एंट्री व आवक माल (Stock In)' : 'Purchase Inward & Goods Receipt'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Record inventory purchases from suppliers and automatically restock variants
+              {language === 'hi' ? 'सप्लायर से माल की खरीदी दर्ज करें और स्टॉक ऑटोमैटिक बढ़ाएं' : 'Record inventory purchases from suppliers and automatically restock variants'}
             </p>
           </div>
         </div>
@@ -181,7 +185,7 @@ export const PurchaseManager: React.FC<PurchaseManagerProps> = ({ currentUser, s
             className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>New Purchase Entry</span>
+            <span>{language === 'hi' ? 'नई खरीदी एंट्री' : 'New Purchase Entry'}</span>
           </button>
         )}
       </div>
@@ -190,7 +194,7 @@ export const PurchaseManager: React.FC<PurchaseManagerProps> = ({ currentUser, s
       <div className="flex-1 overflow-y-auto p-4">
         {purchases.length === 0 ? (
           <div className="text-center py-16 text-slate-400 text-xs">
-            No purchase records found. Click "New Purchase Entry" to receive stock from a supplier.
+            {language === 'hi' ? 'कोई खरीदी रिकॉर्ड नहीं मिला। सप्लायर से नया माल जोड़ने के लिए "नई खरीदी एंट्री" दबाएं।' : 'No purchase records found. Click "New Purchase Entry" to receive stock from a supplier.'}
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">

@@ -14,6 +14,7 @@ import {
   FileSpreadsheet,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface ReportsManagerProps {
   currentUser: User;
@@ -21,6 +22,7 @@ interface ReportsManagerProps {
 }
 
 export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [reportTab, setReportTab] = useState<'sales' | 'profit' | 'categories' | 'inventory'>(
     'sales'
   );
@@ -153,9 +155,11 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
             <BarChart3 className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Business Reports & Analytics</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'दुकान रिपोर्ट व व्यापार विश्लेषण' : 'Business Reports & Analytics'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Retail sales analysis, gross profit with historical cost accounting, and category metrics
+              {language === 'hi' ? 'दैनिक बिक्री, सकल मुनाफा, केटेगरी अनुसार सेल और स्टॉक स्थिति' : 'Retail sales analysis, gross profit with historical cost accounting, and category metrics'}
             </p>
           </div>
         </div>
@@ -174,12 +178,12 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
                 }`}
               >
                 {r === 'TODAY'
-                  ? 'Today'
+                  ? (language === 'hi' ? 'आज' : 'Today')
                   : r === 'WEEK'
-                  ? '7 Days'
+                  ? (language === 'hi' ? '7 दिन' : '7 Days')
                   : r === 'MONTH'
-                  ? '30 Days'
-                  : 'All Time'}
+                  ? (language === 'hi' ? '30 दिन' : '30 Days')
+                  : (language === 'hi' ? 'सभी समय' : 'All Time')}
               </button>
             ))}
           </div>
@@ -189,7 +193,7 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
             className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition-all"
           >
             <Download className="w-4 h-4" />
-            <span>Export CSV</span>
+            <span>{language === 'hi' ? 'CSV डाउनलोड' : 'Export CSV'}</span>
           </button>
         </div>
       </div>
@@ -204,7 +208,17 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
           }`}
         >
-          Sales & Discounts
+          {language === 'hi' ? 'बिक्री व छूट' : 'Sales & Discounts'}
+        </button>
+        <button
+          onClick={() => setReportTab('profit')}
+          className={`px-4 py-2 rounded-xl transition-all ${
+            reportTab === 'profit'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+          }`}
+        >
+          {language === 'hi' ? 'मुनाफा व लाभ (P&L)' : 'Profit & Loss'}
         </button>
         <button
           onClick={() => setReportTab('categories')}
@@ -214,20 +228,18 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
               : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
           }`}
         >
-          Category-wise Sales
+          {language === 'hi' ? 'केटेगरी रिपोर्ट' : 'Categories'}
         </button>
-        {currentUser.role !== 'CASHIER' && (
-          <button
-            onClick={() => setReportTab('profit')}
-            className={`px-4 py-2 rounded-xl transition-all ${
-              reportTab === 'profit'
-                ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-            }`}
-          >
-            Profit & Loss (COGS)
-          </button>
-        )}
+        <button
+          onClick={() => setReportTab('inventory')}
+          className={`px-4 py-2 rounded-xl transition-all ${
+            reportTab === 'inventory'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+          }`}
+        >
+          {language === 'hi' ? 'स्टॉक मूल्यांकन' : 'Inventory Valuation'}
+        </button>
       </div>
 
       {/* Report Content */}

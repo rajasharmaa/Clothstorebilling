@@ -23,6 +23,7 @@ import {
   Archive,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface ProductManagerProps {
   currentUser: User;
@@ -30,6 +31,7 @@ interface ProductManagerProps {
 }
 
 export const ProductManager: React.FC<ProductManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>(StorageService.getProducts());
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
@@ -137,9 +139,11 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ currentUser, sho
             <Shirt className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Product & Variant Master</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'कपड़े व उत्पाद मास्टर' : 'Product & Variant Master'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Manage clothing catalogue with size, color, barcodes, and rates
+              {language === 'hi' ? 'साइज़, रंग और भाव के अनुसार कपड़ों का कैटलॉग' : 'Manage clothing catalogue with size, color, barcodes, and rates'}
             </p>
           </div>
         </div>
@@ -150,7 +154,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ currentUser, sho
             className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20 transition-all"
           >
             <Plus className="w-4 h-4" />
-            <span>Add New Clothing Item</span>
+            <span>{language === 'hi' ? 'नया कपड़ा जोड़ें' : 'Add New Clothing Item'}</span>
           </button>
         )}
       </div>
@@ -161,7 +165,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ currentUser, sho
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Search by Name, Code, SKU, Barcode, Size..."
+            placeholder={language === 'hi' ? 'कपड़े का नाम, कोड या साइज़ से खोजें...' : 'Search by Name, Code, SKU, Barcode, Size...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
@@ -177,7 +181,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ currentUser, sho
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
-            All Categories
+            {language === 'hi' ? 'सभी केटेगरी' : 'All Categories'}
           </button>
           {CLOTHING_CATEGORIES.map((cat) => (
             <button

@@ -22,6 +22,7 @@ import {
   Package,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface InventoryManagerProps {
   currentUser: User;
@@ -32,6 +33,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
   currentUser,
   shopSettings,
 }) => {
+  const { tr, language } = useLanguage();
   const [activeTab, setActiveTab] = useState<'stock' | 'ledger'>('stock');
   const [products, setProducts] = useState<Product[]>(StorageService.getProducts());
   const [ledger, setLedger] = useState<StockLedgerEntry[]>(StorageService.getStockLedger());
@@ -132,9 +134,11 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
             <Layers className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Inventory & Stock Ledger</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'इन्वेंट्री व स्टॉक खाता' : 'Inventory & Stock Ledger'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Live variant stock monitoring and complete auditable stock movement logs
+              {language === 'hi' ? 'कपड़ों का लाइव स्टॉक और इन्वेंट्री गतिविधि रिकॉर्ड' : 'Live variant stock monitoring and complete auditable stock movement logs'}
             </p>
           </div>
         </div>
@@ -149,7 +153,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Current Stock ({allVariants.length})
+            {language === 'hi' ? `वर्तमान स्टॉक (${allVariants.length})` : `Current Stock (${allVariants.length})`}
           </button>
           <button
             onClick={() => setActiveTab('ledger')}
@@ -159,7 +163,7 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Audit Stock Ledger ({ledger.length})
+            {language === 'hi' ? `स्टॉक हलचल रिकॉर्ड (${ledger.length})` : `Audit Stock Ledger (${ledger.length})`}
           </button>
         </div>
       </div>

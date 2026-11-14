@@ -166,7 +166,7 @@ export const translations: Record<Language, Translations> = {
     selectLanguage: 'Language',
   },
   hi: {
-    newBill: 'नया बिल',
+    newBill: 'नया बिलिंग',
     stock: 'स्टॉक',
     bills: 'बिक्री पर्चियां',
     more: 'अन्य मेन्यू',
@@ -244,11 +244,168 @@ export const translations: Record<Language, Translations> = {
   },
 };
 
+// Global Hindi translation dictionary for whole-software multi-language support
+export const HINDI_DICTIONARY: Record<string, string> = {
+  // Sidebar & Navigation
+  'Dashboard': 'दुकान डैशबोर्ड',
+  'New Billing': 'नया बिल (POS)',
+  'Sales History': 'बिक्री पर्चियां (इतिहास)',
+  'Products': 'कपड़े व उत्पाद',
+  'Inventory / Stock': 'इन्वेंट्री / स्टॉक',
+  'Purchase Entry': 'खरीदी एंट्री (Stock In)',
+  'Suppliers': 'थोक सप्लायर',
+  'Customers': 'ग्राहक व उधारी खाता',
+  'Returns & Exchange': 'वापसी व एक्सचेंज',
+  'Expenses': 'दुकान खर्चे',
+  'Reports & Analytics': 'रिपोर्ट व हिसाब',
+  'Settings': 'दुकान सेटिंग्स',
+  'Retail POS & Stock': 'कपड़ा बिलिंग व स्टॉक',
+  'All Items': 'सभी कपड़े',
+
+  // Common UI words
+  'Search': 'खोजें',
+  'Add': 'जोड़ें',
+  'Add New': 'नया जोड़ें',
+  'Save': 'सेव करें',
+  'Cancel': 'रद्द करें',
+  'Delete': 'हटाएं',
+  'Edit': 'संशोधित करें',
+  'Update': 'अपडेट करें',
+  'Close': 'बंद करें',
+  'Print': 'प्रिंट करें',
+  'Download': 'डाउनलोड करें',
+  'Share': 'शेयर करें',
+  'Export': 'एक्सपोर्ट',
+  'Import': 'इम्पोर्ट',
+  'Actions': 'कार्य',
+  'Status': 'स्थिति',
+  'Active': 'सक्रिय',
+  'Inactive': 'निष्क्रिय',
+  'Date': 'तारीख',
+  'Total': 'कुल',
+  'Subtotal': 'सबटोटल',
+  'Quantity': 'मात्रा (Pcs)',
+  'Qty': 'मात्रा',
+  'Price': 'कीमत',
+  'Rate': 'दर (₹)',
+  'Amount': 'राशि (₹)',
+  'Discount': 'छूट',
+  'Final Payable': 'कुल देय राशि',
+  'Paid': 'जमा',
+  'Due': 'बाकी',
+  'Balance Due': 'उधारी बाकी',
+  'Cash Received': 'प्राप्त कैश',
+  'Change to Return': 'वापसी राशि',
+  'Payment Mode': 'भुगतान प्रकार',
+  'Cash': 'कैश',
+  'UPI': 'यूपीआई',
+  'Card': 'कार्ड',
+  'Split': 'स्प्लिट',
+  'Credit / Due': 'उधारी',
+  'Customer': 'ग्राहक',
+  'Mobile': 'मोबाइल',
+  'Customer Name': 'ग्राहक का नाम',
+  'Customer Mobile': 'ग्राहक का मोबाइल',
+  'Note': 'विवरण / नोट',
+  'Yes': 'हाँ',
+  'No': 'नहीं',
+
+  // Dashboard Metrics
+  "Today's Sales": 'आज की कुल बिक्री',
+  "Today's Revenue": 'आज की आमदनी',
+  "Today's Bills": 'आज के कुल बिल',
+  'Items Sold': 'बिके हुए कपड़े (Pcs)',
+  'Gross Profit': 'सकल मुनाफा (Profit)',
+  'Total Inventory Value': 'स्टॉक का कुल मूल्य',
+  'Low Stock Items': 'कम स्टॉक वाले कपड़े',
+  'Out of Stock': 'स्टॉक खत्म (0 Pcs)',
+  'Top Selling Products': 'सबसे ज्यादा बिकने वाले कपड़े',
+  'Recent Bills': 'हाल ही की बिक्री पर्चियां',
+  'Recent Invoices': 'हाल की पर्चियां',
+  'Sales by Category': 'केटेगरी अनुसार बिक्री',
+  'Payment Modes': 'पेमेंट मोड विश्लेषण',
+  'Quick Billing': 'तुरंत नया बिल बनाएं',
+
+  // Products & Inventory
+  'Product Name': 'कपड़े का नाम',
+  'Item Code': 'आइटम कोड / बारकोड',
+  'Category': 'केटेगरी',
+  'Select Category': 'केटेगरी चुनें',
+  'Purchase Price': 'खरीद भाव (₹)',
+  'Selling Price': 'बिक्री भाव (₹)',
+  'Sizes': 'उपलब्ध साइज़',
+  'Colors': 'रंग (Color)',
+  'Stock': 'स्टॉक',
+  'In Stock': 'स्टॉक में उपलब्ध',
+  'Low Stock Alert': 'कम स्टॉक चेतावनी',
+  'Add Product': 'नया कपड़ा जोड़ें',
+  'Add New Product': 'नया कपड़ा स्टॉक में जोड़ें',
+  'Edit Product': 'कपड़ा विवरण बदलें',
+  'Adjust Stock': 'स्टॉक घटाएं या बढ़ाएं',
+  'Stock Adjustment': 'स्टॉक एडजस्टमेंट',
+  'Total Products': 'कुल कपड़े (प्रकार)',
+  'Total Pcs in Stock': 'स्टॉक में कुल पीस',
+  'Add Variant': 'साइज़/कलर जोड़ें',
+
+  // Purchases
+  'Add Purchase': 'नया माल स्टॉक में जोड़ें (खरीदी)',
+  'Purchase Stock In': 'खरीदी स्टॉक एंट्री',
+  'Supplier': 'थोक सप्लायर',
+  'Invoice No': 'खरीदी बिल / चालान नं.',
+  'Purchase Date': 'खरीदी तारीख',
+  'Total Purchase Cost': 'कुल खरीदी लागत',
+
+  // Customers & Khata
+  'Add Customer': 'नया ग्राहक जोड़ें',
+  'Customer Ledger': 'ग्राहक उधारी खाता',
+  'Receive Payment': 'उधारी जमा करें',
+  'Payment History': 'भुगतान इतिहास',
+  'Settle Due': 'खाता क्लियर करें',
+
+  // Suppliers
+  'Add Supplier': 'नया सप्लायर जोड़ें',
+  'Supplier Name': 'सप्लायर का नाम',
+  'Contact Person': 'संपर्क व्यक्ति',
+  'Firm Name': 'कंपनी या दुकान का नाम',
+
+  // Returns & Expenses
+  'Return Item': 'कपड़ा वापसी / रिटर्न',
+  'Return Reason': 'वापसी का कारण',
+  'Refund': 'रिफंड (पैसे वापसी)',
+  'Exchange': 'एक्सचेंज (बदली)',
+  'Add Expense': 'दुकान खर्चा जोड़ें',
+  'Expense Category': 'खर्चे की श्रेणी',
+  'Expense Amount': 'खर्चा राशि (₹)',
+  'Daily Store Expenses': 'दुकान के दैनिक खर्चे',
+
+  // Reports
+  'Sales Report': 'बिक्री रिपोर्ट',
+  'Profit Report': 'मुनाफा रिपोर्ट',
+  'Stock Report': 'स्टॉक रिपोर्ट',
+  'Daily Summary': 'दैनिक समरी',
+  'Monthly Summary': 'मासिक समरी',
+
+  // User Switch
+  'Switch Cashier / Role': 'स्टाफ / रोल बदलें',
+  'Select Staff Account': 'स्टाफ खाता चुनें',
+  'Enter 4-Digit Security PIN': '4-अंकों का सुरक्षा पिन दर्ज करें',
+  'Switch User': 'यूज़र बदलें',
+
+  // Receipt & Print
+  'Generate & Print Slip': 'बिल बनाएं व पर्ची प्रिंट करें',
+  'Thermal Print': 'थर्मल प्रिंट',
+  'Send WhatsApp PDF': 'WhatsApp PDF भेजें',
+  'Download PDF': 'PDF डाउनलोड करें',
+  'Bill Number': 'बिल नंबर',
+  'Cash Memo': 'कैश मेमो',
+};
+
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
   t: Translations;
+  tr: (text: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
@@ -256,6 +413,7 @@ const LanguageContext = createContext<LanguageContextType>({
   setLanguage: () => {},
   toggleLanguage: () => {},
   t: translations.en,
+  tr: (text: string) => text,
 });
 
 const STORAGE_KEY = 'tara_collection_language';
@@ -264,7 +422,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [language, setLanguageState] = useState<Language>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      return saved === 'hi' ? 'hi' : 'en'; // Default to English as requested
+      return saved === 'hi' ? 'hi' : 'en'; // Default to English
     } catch {
       return 'en';
     }
@@ -283,6 +441,13 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setLanguage(language === 'en' ? 'hi' : 'en');
   };
 
+  const tr = (text: string): string => {
+    if (language === 'hi') {
+      return HINDI_DICTIONARY[text] || text;
+    }
+    return text;
+  };
+
   return (
     <LanguageContext.Provider
       value={{
@@ -290,6 +455,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setLanguage,
         toggleLanguage,
         t: translations[language],
+        tr,
       }}
     >
       {children}
@@ -310,7 +476,7 @@ export const LanguageSelector: React.FC<{ className?: string; compact?: boolean 
       <button
         type="button"
         onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-        className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors shadow-sm ${
+        className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors shadow-sm select-none ${
           language === 'hi'
             ? 'bg-amber-500/10 text-amber-600 border-amber-300 hover:bg-amber-500/20'
             : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
@@ -324,11 +490,11 @@ export const LanguageSelector: React.FC<{ className?: string; compact?: boolean 
   }
 
   return (
-    <div className={`inline-flex items-center p-0.5 rounded-lg border border-slate-200 bg-slate-100 ${className}`}>
+    <div className={`inline-flex items-center p-0.5 rounded-lg border border-slate-200 bg-slate-100 select-none ${className}`}>
       <button
         type="button"
         onClick={() => setLanguage('en')}
-        className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
+        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
           language === 'en'
             ? 'bg-white text-blue-700 shadow-sm'
             : 'text-slate-600 hover:text-slate-900'
@@ -339,7 +505,7 @@ export const LanguageSelector: React.FC<{ className?: string; compact?: boolean 
       <button
         type="button"
         onClick={() => setLanguage('hi')}
-        className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
+        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
           language === 'hi'
             ? 'bg-white text-blue-700 shadow-sm'
             : 'text-slate-600 hover:text-slate-900'

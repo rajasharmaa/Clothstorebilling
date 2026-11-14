@@ -25,6 +25,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface MobileStockManagerProps {
   currentUser: User;
@@ -35,6 +36,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
   currentUser,
   shopSettings,
 }) => {
+  const { tr, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>(StorageService.getProducts());
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('ALL');
@@ -215,7 +217,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Stock search karein (Name, Size, Colour)..."
+              placeholder={language === 'hi' ? "स्टॉक खोजें (नाम, साइज़, रंग)..." : "Search stock (Name, Size, Color)..."}
               className="w-full pl-9 pr-3 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none font-medium"
             />
           </div>
@@ -226,7 +228,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
               className="px-3 py-2 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center space-x-1 shrink-0 h-10 shadow-sm"
             >
               <Plus className="w-4 h-4" />
-              <span>Naya Product</span>
+              <span>{language === 'hi' ? "नया कपड़ा" : "Add Product"}</span>
             </button>
           )}
         </div>
@@ -241,7 +243,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
             }`}
           >
-            All Items
+            {language === 'hi' ? "सभी कपड़े" : "All Items"}
           </button>
           {CLOTHING_CATEGORIES.map((cat) => (
             <button
@@ -268,7 +270,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
                 : 'bg-slate-50 text-slate-700 border-slate-200'
             }`}
           >
-            <div>All Stock</div>
+            <div>{language === 'hi' ? "कुल स्टॉक" : "All Stock"}</div>
             <div className="text-[11px] font-mono mt-0.5">{totalStockQty} pcs</div>
           </button>
           <button
@@ -279,7 +281,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
                 : 'bg-amber-50 text-amber-800 border-amber-200'
             }`}
           >
-            <div>Low Stock</div>
+            <div>{language === 'hi' ? "कम स्टॉक" : "Low Stock"}</div>
             <div className="text-[11px] font-mono mt-0.5">{lowStockCount} items</div>
           </button>
           <button
@@ -290,7 +292,7 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
                 : 'bg-rose-50 text-rose-800 border-rose-200'
             }`}
           >
-            <div>Out of Stock</div>
+            <div>{language === 'hi' ? "स्टॉक खत्म" : "Out of Stock"}</div>
             <div className="text-[11px] font-mono mt-0.5">{outOfStockCount} items</div>
           </button>
         </div>

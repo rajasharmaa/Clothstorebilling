@@ -881,7 +881,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
           <div className="flex items-center justify-between text-xs">
             <span className="font-bold text-slate-700 flex items-center space-x-1">
               <Tag className="w-3.5 h-3.5 text-blue-600" />
-              <span>Bill-Level Discount:</span>
+              <span>{t.billDiscount}</span>
             </span>
 
             <div className="flex items-center space-x-2">
@@ -921,7 +921,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
           {/* Complete Financial Breakdown */}
           <div className="bg-slate-50 rounded-xl p-3 border border-slate-200 text-xs space-y-1.5">
             <div className="flex justify-between text-slate-700 font-medium">
-              <span>Subtotal:</span>
+              <span>{t.subtotal}</span>
               <span className="font-bold font-mono">
                 ₹{billSummary.totalOriginalAmount.toFixed(2)}
               </span>
@@ -991,7 +991,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
             <div className="space-y-1.5 pt-1">
               <div className="flex items-center space-x-2 text-xs">
                 <div className="flex-1 flex items-center space-x-1.5 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 focus-within:ring-2 focus-within:ring-emerald-500">
-                  <span className="text-slate-500 font-bold">Cash Received: ₹</span>
+                  <span className="text-slate-500 font-bold">{t.cashReceived} ₹</span>
                   <input
                     type="number"
                     step="any"
@@ -1003,7 +1003,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
                 </div>
                 {cashChange > 0 && (
                   <div className="px-3 py-1.5 bg-emerald-50 border border-emerald-300 text-emerald-900 rounded-lg font-extrabold text-xs">
-                    वापस (Change): ₹{cashChange.toFixed(2)}
+                    {t.changeReturn} ₹{cashChange.toFixed(2)}
                   </div>
                 )}
               </div>

@@ -3,6 +3,7 @@ import { Supplier, User, ShopSettings } from '../../types';
 import { StorageService } from '../../lib/storage';
 import { Truck, Plus, Search, Phone, MapPin, IndianRupee, Edit2, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface SupplierManagerProps {
   currentUser: User;
@@ -10,6 +11,7 @@ interface SupplierManagerProps {
 }
 
 export const SupplierManager: React.FC<SupplierManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [suppliers, setSuppliers] = useState<Supplier[]>(StorageService.getSuppliers());
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -66,9 +68,11 @@ export const SupplierManager: React.FC<SupplierManagerProps> = ({ currentUser, s
             <Truck className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Suppliers & Vendor Accounts</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'थोक सप्लायर व व्यापारी' : 'Suppliers & Vendor Accounts'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Manage clothing manufacturers, fabric suppliers, and outstanding purchase dues
+              {language === 'hi' ? 'कपड़ा निर्माता, होलसेल सप्लायर और बकाया लेन-देन का हिसाब' : 'Manage clothing manufacturers, fabric suppliers, and outstanding purchase dues'}
             </p>
           </div>
         </div>
@@ -79,7 +83,7 @@ export const SupplierManager: React.FC<SupplierManagerProps> = ({ currentUser, s
             className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
           >
             <Plus className="w-4 h-4" />
-            <span>Add Supplier</span>
+            <span>{language === 'hi' ? 'नया सप्लायर जोड़ें' : 'Add Supplier'}</span>
           </button>
         )}
       </div>
@@ -88,6 +92,13 @@ export const SupplierManager: React.FC<SupplierManagerProps> = ({ currentUser, s
       <div className="p-4 border-b border-slate-200 bg-white flex items-center shrink-0">
         <div className="relative w-80">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+          <input
+            type="text"
+            placeholder={language === 'hi' ? 'सप्लायर नाम, फर्म या फोन से खोजें...' : 'Search by Supplier Name, Business, Mobile...'}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
+          />
           <input
             type="text"
             placeholder="Search by Contact Name, Business, Phone..."

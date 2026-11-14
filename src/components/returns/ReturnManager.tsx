@@ -23,6 +23,7 @@ import {
   X,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface ReturnManagerProps {
   currentUser: User;
@@ -30,6 +31,7 @@ interface ReturnManagerProps {
 }
 
 export const ReturnManager: React.FC<ReturnManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [returns, setReturns] = useState<ReturnTransaction[]>(StorageService.getReturns());
   const [sales] = useState<Sale[]>(StorageService.getSales());
   const [products] = useState<Product[]>(StorageService.getProducts());
@@ -138,9 +140,11 @@ export const ReturnManager: React.FC<ReturnManagerProps> = ({ currentUser, shopS
             <RotateCcw className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Customer Returns & Exchanges</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'कपड़ा वापसी व एक्सचेंज' : 'Customer Returns & Exchanges'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Process customer item returns, exchange differences, and stock condition routing
+              {language === 'hi' ? 'ग्राहक द्वारा कपड़ा वापसी, एक्सचेंज अंतर और स्टॉक रीस्टोर' : 'Process customer item returns, exchange differences, and stock condition routing'}
             </p>
           </div>
         </div>
@@ -154,7 +158,7 @@ export const ReturnManager: React.FC<ReturnManagerProps> = ({ currentUser, shopS
           className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
         >
           <Plus className="w-4 h-4" />
-          <span>Process Return / Exchange</span>
+          <span>{language === 'hi' ? 'वापसी / एक्सचेंज करें' : 'Process Return / Exchange'}</span>
         </button>
       </div>
 
@@ -162,7 +166,7 @@ export const ReturnManager: React.FC<ReturnManagerProps> = ({ currentUser, shopS
       <div className="flex-1 overflow-y-auto p-4">
         {returns.length === 0 ? (
           <div className="text-center py-16 text-slate-400 text-xs">
-            No return or exchange records found.
+            {language === 'hi' ? 'कोई वापसी या एक्सचेंज रिकॉर्ड नहीं मिला।' : 'No return or exchange records found.'}
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-xs">

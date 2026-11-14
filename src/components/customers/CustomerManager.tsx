@@ -3,6 +3,7 @@ import { Customer, User, ShopSettings } from '../../types';
 import { StorageService } from '../../lib/storage';
 import { Users, Plus, Search, Phone, MapPin, IndianRupee, Edit2, X, Clock } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface CustomerManagerProps {
   currentUser: User;
@@ -10,6 +11,7 @@ interface CustomerManagerProps {
 }
 
 export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, shopSettings }) => {
+  const { tr, language } = useLanguage();
   const [customers, setCustomers] = useState<Customer[]>(StorageService.getCustomers());
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,9 +62,11 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, s
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="font-extrabold text-slate-900 text-lg">Customer Directory & Credit</h2>
+            <h2 className="font-extrabold text-slate-900 text-lg">
+              {language === 'hi' ? 'ग्राहक व उधारी खाता' : 'Customer Directory & Credit'}
+            </h2>
             <p className="text-xs text-slate-500">
-              Manage retail customers, store credits, purchase history, and contact details
+              {language === 'hi' ? 'ग्राहक फोन नंबर, उधारी बाकी और खरीदारी का पूरा हिसाब' : 'Manage retail customers, store credits, purchase history, and contact details'}
             </p>
           </div>
         </div>
@@ -72,7 +76,7 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, s
           className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Customer</span>
+          <span>{language === 'hi' ? 'नया ग्राहक जोड़ें' : 'Add Customer'}</span>
         </button>
       </div>
 
@@ -82,7 +86,7 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, s
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="Search by Customer Name, Mobile Number..."
+            placeholder={language === 'hi' ? 'ग्राहक का नाम या मोबाइल नंबर से खोजें...' : 'Search by Customer Name, Mobile Number...'}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"

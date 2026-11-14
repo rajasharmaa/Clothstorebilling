@@ -29,6 +29,7 @@ import {
   Legend,
 } from 'recharts';
 import { ActiveTab } from '../layout/Sidebar';
+import { useLanguage } from '../../lib/i18n';
 
 interface ShopDashboardProps {
   setActiveTab: (tab: ActiveTab) => void;
@@ -43,6 +44,7 @@ export const ShopDashboard: React.FC<ShopDashboardProps> = ({
   shopSettings,
   currentUser,
 }) => {
+  const { tr, language, t } = useLanguage();
   const products = StorageService.getProducts();
   const sales = StorageService.getSales();
   const purchases = StorageService.getPurchases();
@@ -163,19 +165,19 @@ export const ShopDashboard: React.FC<ShopDashboardProps> = ({
           className="flex items-center space-x-2 px-6 py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-blue-600/40 transition-all hover:scale-[1.02] active:scale-[0.98]"
         >
           <ShoppingCart className="w-5 h-5" />
-          <span>New Cash Memo</span>
+          <span>{tr('Quick Billing')}</span>
         </button>
       </div>
 
       {/* KPI Cards: Today's Business */}
       <div>
         <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-          Today's Performance
+          {language === 'hi' ? 'आज का व्यापार (Today Performance)' : "Today's Performance"}
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-              <span>Today's Sales</span>
+              <span>{tr("Today's Sales")}</span>
               <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
                 <IndianRupee className="w-4 h-4" />
               </div>
@@ -185,14 +187,14 @@ export const ShopDashboard: React.FC<ShopDashboardProps> = ({
                 ₹{todayRevenue.toFixed(2)}
               </div>
               <div className="text-xs text-slate-500 mt-0.5">
-                {todayBillsCount} bill{todayBillsCount !== 1 ? 's' : ''} • {todayItemsCount} items
+                {todayBillsCount} {language === 'hi' ? 'बिल' : 'bills'} • {todayItemsCount} {language === 'hi' ? 'कपड़े' : 'items'}
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-              <span>Total Discounts Given</span>
+              <span>{language === 'hi' ? 'कुल दी गई छूट' : 'Total Discounts Given'}</span>
               <div className="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
                 <Tag className="w-4 h-4" />
               </div>
@@ -201,13 +203,13 @@ export const ShopDashboard: React.FC<ShopDashboardProps> = ({
               <div className="text-2xl font-black text-emerald-600 font-mono">
                 ₹{todayDiscount.toFixed(2)}
               </div>
-              <div className="text-xs text-slate-500 mt-0.5">Dual discount savings</div>
+              <div className="text-xs text-slate-500 mt-0.5">{language === 'hi' ? 'ग्राहकों की बचत' : 'Dual discount savings'}</div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-slate-500 text-xs font-semibold">
-              <span>Collected / Dues</span>
+              <span>{language === 'hi' ? 'जमा कैश / उधारी' : 'Collected / Dues'}</span>
               <div className="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
                 <TrendingUp className="w-4 h-4" />
               </div>
@@ -218,9 +220,9 @@ export const ShopDashboard: React.FC<ShopDashboardProps> = ({
               </div>
               <div className="text-xs text-slate-500 mt-0.5">
                 {todayDues > 0 ? (
-                  <span className="text-rose-600 font-bold">₹{todayDues.toFixed(2)} Pending Due</span>
+                  <span className="text-rose-600 font-bold">₹{todayDues.toFixed(2)} {language === 'hi' ? 'उधारी बाकी' : 'Pending Due'}</span>
                 ) : (
-                  <span className="text-emerald-600 font-bold">No Dues Pending</span>
+                  <span className="text-emerald-600 font-bold">{language === 'hi' ? 'कोई उधारी नहीं' : 'No Dues Pending'}</span>
                 )}
               </div>
             </div>

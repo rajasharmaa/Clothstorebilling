@@ -3,6 +3,7 @@ import { User } from '../../types';
 import { StorageService } from '../../lib/storage';
 import { X, Lock, KeyRound, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface UserSwitchModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
   currentUser,
   onUserChanged,
 }) => {
+  const { tr, language } = useLanguage();
   const [users] = useState<User[]>(StorageService.getUsers());
   const [selectedUser, setSelectedUser] = useState<User | null>(currentUser);
   const [pin, setPin] = useState<string>('');
@@ -29,13 +31,13 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
     if (!selectedUser) return;
 
     if (selectedUser.pin && pin !== selectedUser.pin) {
-      setError('Invalid 4-digit PIN for this user');
+      setError(language === 'hi' ? 'इस यूज़र के लिए गलत 4-अंकों का पिन है' : 'Invalid 4-digit PIN for this user');
       return;
     }
 
     StorageService.setCurrentUser(selectedUser);
     onUserChanged(selectedUser);
-    toast.success(`Switched active user to ${selectedUser.name}`);
+    toast.success(language === 'hi' ? `सक्रिय यूज़र ${selectedUser.name} में बदला गया` : `Switched active user to ${selectedUser.name}`);
     onClose();
   };
 
@@ -45,7 +47,7 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
         <div className="p-4 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Lock className="w-5 h-5 text-blue-400" />
-            <h3 className="font-bold text-base">Switch Cashier / Role</h3>
+            <h3 className="font-bold text-base">{tr('Switch Cashier / Role')}</h3>
           </div>
           <button
             onClick={onClose}
@@ -58,7 +60,7 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
         <form onSubmit={handleSwitch} className="p-6 space-y-5">
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Select Staff Account
+              {tr('Select Staff Account')}
             </label>
             <div className="space-y-2">
               {users.map((u) => {
@@ -94,7 +96,7 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              Enter 4-Digit Security PIN
+              {tr('Enter 4-Digit Security PIN')}
             </label>
             <div className="relative">
               <KeyRound className="w-4 h-4 text-slate-400 absolute left-3 top-3" />
@@ -106,7 +108,7 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
                   setPin(e.target.value.replace(/\D/g, ''));
                   setError('');
                 }}
-                placeholder="Default: Admin 1234, Mgr 2345, Cashier 0000"
+                placeholder={language === 'hi' ? 'पिन दर्ज करें (उदा. 1234)' : 'Default: Admin 1234, Mgr 2345, Cashier 0000'}
                 className="w-full pl-9 pr-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono tracking-widest text-center"
                 autoFocus
               />
@@ -120,13 +122,13 @@ export const UserSwitchModal: React.FC<UserSwitchModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
             >
-              Cancel
+              {tr('Cancel')}
             </button>
             <button
               type="submit"
               className="px-5 py-2 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors shadow-md shadow-blue-500/20"
             >
-              Authorize & Switch
+              {language === 'hi' ? 'सत्यापित करें व बदलें' : 'Authorize & Switch'}
             </button>
           </div>
         </form>
