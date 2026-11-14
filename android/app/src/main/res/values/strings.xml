@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TARA COLLECTION</string>
+    <string name="title_activity_main">TARA COLLECTION</string>
+    <string name="package_name">com.taracollection.pos</string>
+    <string name="custom_url_scheme">com.taracollection.pos</string>
+</resources>
