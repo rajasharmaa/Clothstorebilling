@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  LucideIcon,
   LayoutDashboard,
   ShoppingCart,
   Receipt,
@@ -31,6 +32,14 @@ export type ActiveTab =
   | 'reports'
   | 'settings';
 
+interface NavItem {
+  id: ActiveTab;
+  label: string;
+  icon: LucideIcon;
+  highlight?: boolean;
+  badge?: string;
+}
+
 interface SidebarProps {
   activeTab: ActiveTab;
   setActiveTab: (tab: ActiveTab) => void;
@@ -40,13 +49,14 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, shopName }) => {
   const { tr, language } = useLanguage();
 
-  const navItems = [
+  const navItems: NavItem[] = [
     { id: 'dashboard', label: tr('Dashboard'), icon: LayoutDashboard },
     {
       id: 'billing',
       label: tr('New Billing'),
       icon: ShoppingCart,
       highlight: true,
+      badge: 'F1',
     },
     { id: 'sales', label: tr('Sales History'), icon: Receipt },
     { id: 'products', label: tr('Products'), icon: Shirt },
