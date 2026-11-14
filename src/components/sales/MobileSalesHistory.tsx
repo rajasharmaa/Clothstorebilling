@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { ReceiptModal } from '../pos/ReceiptModal';
 import { generateWhatsAppMessage } from '../../lib/receipt';
 import { sharePDFOnWhatsApp } from '../../lib/pdfGenerator';
+import { useLanguage } from '../../lib/i18n';
 
 interface MobileSalesHistoryProps {
   currentUser: User;
@@ -31,6 +32,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
   currentUser,
   shopSettings,
 }) => {
+  const { t, language } = useLanguage();
   const [sales, setSales] = useState<Sale[]>(StorageService.getSales());
   const [search, setSearch] = useState('');
   const [dateFilter, setDateFilter] = useState<'TODAY' | 'YESTERDAY' | 'WEEK' | 'ALL'>('TODAY');
@@ -82,37 +84,37 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
     if (!cancellingSale) return;
 
     if (currentUser.role === 'CASHIER') {
-      toast.error('कैशियर बिल कैंसिल नहीं कर सकते (Owner/Manager required)');
+      toast.error(language === 'hi' ? 'कैशियर बिल कैंसिल नहीं कर सकते (Owner/Manager required)' : 'Cashiers cannot cancel bills (Admin required)');
       return;
     }
 
     if (!cancelReason.trim()) {
-      toast.error('कृपया बिल कैंसिल करने का कारण लिखें');
+      toast.error(language === 'hi' ? 'कृपया बिल कैंसिल करने का कारण लिखें' : 'Please provide cancellation reason');
       return;
     }
 
     const res = StorageService.cancelBill(cancellingSale.billNumber, cancelReason);
     if (res.success) {
-      toast.success(`बिल #${cancellingSale.billNumber} कैंसिल कर दिया गया व स्टॉक रिस्टोर हुआ`);
+      toast.success(language === 'hi' ? `बिल #${cancellingSale.billNumber} कैंसिल कर दिया गया व स्टॉक रिस्टोर हुआ` : `Bill #${cancellingSale.billNumber} cancelled & stock restored`);
       setCancellingSale(null);
       setCancelReason('');
       reload();
     } else {
-      toast.error(res.error || 'बिल कैंसिल नहीं हो सका');
+      toast.error(res.error || (language === 'hi' ? 'बिल कैंसिल नहीं हो सका' : 'Could not cancel bill'));
     }
   };
 
   const handleWhatsAppShare = async (sale: Sale) => {
-    toast.loading('WhatsApp PDF तैयार हो रहा है...', { id: 'mob-sales-pdf' });
+    toast.loading(language === 'hi' ? 'WhatsApp PDF तैयार हो रहा है...' : 'Generating WhatsApp PDF...', { id: 'mob-sales-pdf' });
     try {
       const res = await sharePDFOnWhatsApp(sale, shopSettings, sale.customerMobile);
       if (res.method === 'web_share') {
-        toast.success('WhatsApp पर बिल PDF शेयर कर दिया गया!', { id: 'mob-sales-pdf' });
+        toast.success(language === 'hi' ? 'WhatsApp पर बिल PDF शेयर कर दिया गया!' : 'Bill PDF shared via WhatsApp!', { id: 'mob-sales-pdf' });
       } else {
-        toast.success('PDF डाउनलोड हो गया! WhatsApp खुल गया है।', { id: 'mob-sales-pdf' });
+        toast.success(language === 'hi' ? 'PDF डाउनलोड हो गया! WhatsApp खुल गया है।' : 'PDF downloaded! WhatsApp opened.', { id: 'mob-sales-pdf' });
       }
     } catch (e) {
-      toast.error('WhatsApp शेयर करने में समस्या आई', { id: 'mob-sales-pdf' });
+      toast.error(language === 'hi' ? 'WhatsApp शेयर करने में समस्या आई' : 'Failed to share PDF', { id: 'mob-sales-pdf' });
     }
   };
 
@@ -143,7 +145,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
-            placeholder="बिल नंबर, मोबाइल या ग्राहक खोजें..."
+            placeholder={t.searchBills}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-slate-100 border border-slate-200 rounded-xl pl-9 pr-9 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -162,10 +164,10 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
         <div className="flex items-center justify-between gap-2 overflow-x-auto no-scrollbar">
           <div className="flex items-center space-x-1.5 shrink-0">
             {[
-              { id: 'TODAY', label: 'आज (Today)' },
-              { id: 'YESTERDAY', label: 'कल (Yesterday)' },
-              { id: 'WEEK', label: '7 दिन (Week)' },
-              { id: 'ALL', label: 'सभी (All)' },
+              { id: 'TODAY', label: t.today },
+              { id: 'YESTERDAY', label: t.yesterday },
+              { id: 'WEEK', label: t.last7Days },
+              { id: 'ALL', label: t.allBills },
             ].map((f) => (
               <button
                 key={f.id}
@@ -184,9 +186,9 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
 
         {/* Summary Banner */}
         <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900 font-semibold">
-          <span>{filteredSales.length} बिल मिले</span>
+          <span>{filteredSales.length} {language === 'hi' ? 'बिल मिले' : 'Bills found'}</span>
           <span className="font-bold text-blue-700">
-            कुल: ₹{totalFilteredSalesAmount.toLocaleString('en-IN')}
+            {t.totalSales} ₹{totalFilteredSalesAmount.toLocaleString('en-IN')}
           </span>
         </div>
       </div>
@@ -196,9 +198,9 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
         {filteredSales.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-slate-400 text-center">
             <Receipt className="w-12 h-12 stroke-[1.5] mb-2 text-slate-300" />
-            <p className="font-semibold text-slate-600">कोई बिल नहीं मिला</p>
+            <p className="font-semibold text-slate-600">{language === 'hi' ? 'कोई बिल नहीं मिला' : 'No bills found'}</p>
             <p className="text-xs text-slate-400 mt-0.5">
-              फ़िल्टर बदलकर देखें या नया बिल बनाएं
+              {language === 'hi' ? 'फ़िल्टर बदलकर देखें या नया बिल बनाएं' : 'Try changing filters or create a new bill'}
             </p>
           </div>
         ) : (
@@ -230,7 +232,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                               : 'bg-emerald-100 text-emerald-800'
                           }`}
                         >
-                          {isCancelled ? 'रद्द (CANCELLED)' : sale.paymentMode}
+                          {isCancelled ? (language === 'hi' ? 'रद्द (CANCELLED)' : 'CANCELLED') : sale.paymentMode}
                         </span>
                       </div>
                       <div className="flex items-center space-x-2 text-[11px] text-slate-500 mt-0.5">
@@ -259,7 +261,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                       </div>
                       {sale.discount > 0 && !isCancelled && (
                         <div className="text-[10px] font-bold text-emerald-600 mt-0.5">
-                          बचत ₹{sale.discount.toFixed(0)}
+                          {t.saved} ₹{sale.discount.toFixed(0)}
                         </div>
                       )}
                     </div>
@@ -290,10 +292,12 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                   >
                     <div className="flex items-center justify-between text-xs text-slate-700">
                       <span className="font-semibold text-slate-800">
-                        {sale.items.reduce((s, i) => s + i.quantity, 0)} कपड़े (Items)
+                        {sale.items.reduce((s, i) => s + i.quantity, 0)} {language === 'hi' ? 'कपड़े (Items)' : 'Items'}
                       </span>
                       <span className="text-[11px] text-blue-600 font-bold flex items-center">
-                        {isExpanded ? 'कम दिखाएं' : 'सामान सूची देखें'}
+                        {isExpanded
+                          ? (language === 'hi' ? 'कम दिखाएं' : 'Show less')
+                          : (language === 'hi' ? 'सामान सूची देखें' : 'View items')}
                         <ChevronRight
                           className={`w-3.5 h-3.5 ml-0.5 transition-transform ${
                             isExpanded ? 'rotate-90' : ''
@@ -337,7 +341,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                       className="flex items-center space-x-1.5 px-3 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold active:scale-95 transition-all shadow-sm"
                     >
                       <Printer className="w-3.5 h-3.5" />
-                      <span>प्रिंट पर्ची (Print)</span>
+                      <span>{language === 'hi' ? 'प्रिंट पर्ची' : 'Print Slip'}</span>
                     </button>
 
                     <button
@@ -353,7 +357,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                     <button
                       onClick={() => setCancellingSale(sale)}
                       className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-colors active:scale-95"
-                      title="बिल कैंसिल करें"
+                      title={language === 'hi' ? 'बिल कैंसिल करें' : 'Cancel Bill'}
                     >
                       <XCircle className="w-4 h-4" />
                     </button>
@@ -373,7 +377,7 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
               <div className="flex items-center space-x-2 text-rose-600">
                 <AlertTriangle className="w-5 h-5" />
                 <h3 className="font-black text-base text-slate-900">
-                  बिल #{cancellingSale.billNumber} कैंसिल करें
+                  {language === 'hi' ? `बिल #${cancellingSale.billNumber} कैंसिल करें` : `Cancel Bill #${cancellingSale.billNumber}`}
                 </h3>
               </div>
               <button
@@ -385,18 +389,20 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
             </div>
 
             <p className="text-xs text-slate-500 mb-4">
-              बिल कैंसिल करने पर बिका हुआ सामान वापस इन्वेंट्री स्टॉक में जोड़ दिया जाएगा।
+              {language === 'hi'
+                ? 'बिल कैंसिल करने पर बिका हुआ सामान वापस इन्वेंट्री स्टॉक में जोड़ दिया जाएगा।'
+                : 'Cancelling this bill will automatically restore the sold items back into inventory stock.'}
             </p>
 
             <form onSubmit={handleCancelConfirm} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  कैंसिल करने का कारण (Reason):
+                  {language === 'hi' ? 'कैंसिल करने का कारण (Reason):' : 'Reason for Cancellation:'}
                 </label>
                 <textarea
                   rows={2}
                   required
-                  placeholder="उदा. ग्राहक ने सामान लेने से मना किया / गलत बिल बन गया..."
+                  placeholder={language === 'hi' ? 'उदा. ग्राहक ने सामान लेने से मना किया / गलत बिल बन गया...' : 'e.g. Customer return / wrongly billed...'}
                   value={cancelReason}
                   onChange={(e) => setCancelReason(e.target.value)}
                   className="w-full p-3 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
@@ -409,13 +415,13 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
                   onClick={() => setCancellingSale(null)}
                   className="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl active:scale-95 text-sm"
                 >
-                  रद्द न करें
+                  {language === 'hi' ? 'रद्द न करें' : 'Keep Bill'}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 py-3 bg-rose-600 text-white font-bold rounded-xl active:scale-95 text-sm shadow-md"
                 >
-                  हाँ, कैंसिल करें
+                  {language === 'hi' ? 'हाँ, कैंसिल करें' : 'Yes, Cancel Bill'}
                 </button>
               </div>
             </form>

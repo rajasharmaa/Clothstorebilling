@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { runDiscountVerification } from '../../lib/discount.test';
+import { LanguageSelector } from '../../lib/i18n';
 
 interface SettingsManagerProps {
   currentUser: User;
@@ -224,9 +225,25 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
           {/* TAB 1: SHOP INFORMATION */}
           {activeSubTab === 'shop' && (
             <form onSubmit={handleSaveSettings} className="space-y-4 text-xs">
-              <h3 className="font-extrabold text-slate-900 text-sm mb-4">
-                Shop Identity & Receipts
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-extrabold text-slate-900 text-sm">
+                  Shop Identity & Receipts
+                </h3>
+              </div>
+
+              {/* Language Switcher Setting */}
+              <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-xl flex items-center justify-between mb-4">
+                <div>
+                  <div className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                    <span>🌐</span>
+                    <span>Application Language / भाषा</span>
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Select English or हिन्दी across all screens
+                  </p>
+                </div>
+                <LanguageSelector />
+              </div>
 
               <div>
                 <label className="block font-bold text-slate-700 uppercase mb-1">
@@ -308,12 +325,12 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                     className="w-full px-3 py-2 text-sm border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-mono font-bold text-slate-800 bg-white"
                   />
                   <p className="text-[11px] text-emerald-700 mt-1 font-medium">
-                    उदा. 7000627153@upi, 7000627153@okbizaxis, या 7000627153@paytm
+                    e.g. 7000627153@upi, 7000627153@okbizaxis, or 7000627153@paytm
                   </p>
                 </div>
                 <div>
                   <label className="block font-bold text-emerald-900 uppercase mb-1">
-                    UPI Payee Name (खाता नाम)
+                    UPI Payee Name
                   </label>
                   <input
                     type="text"
@@ -323,7 +340,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                     className="w-full px-3 py-2 text-sm border border-emerald-300 rounded-lg focus:ring-2 focus:ring-emerald-500 font-bold text-slate-800 bg-white"
                   />
                   <p className="text-[11px] text-emerald-700 mt-1 font-medium">
-                    ग्राहक के UPI ऐप में दिखने वाला नाम
+                    Name displayed inside customer UPI payment app
                   </p>
                 </div>
               </div>

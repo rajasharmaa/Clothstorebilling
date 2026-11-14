@@ -11,6 +11,7 @@ import {
   ChevronDown,
 } from 'lucide-react';
 import { ActiveTab } from './Sidebar';
+import { LanguageSelector } from '../../lib/i18n';
 
 interface HeaderProps {
   currentUser: User;
@@ -71,7 +72,10 @@ export const Header: React.FC<HeaderProps> = ({
       </div>
 
       {/* Right: Actions, Clock, User Profile */}
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center space-x-3">
+        {/* Language Switcher */}
+        <LanguageSelector compact />
+
         {/* Live Clock */}
         <div className="hidden sm:flex items-center space-x-1.5 text-xs font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md">
           <Clock className="w-3.5 h-3.5 text-slate-500" />

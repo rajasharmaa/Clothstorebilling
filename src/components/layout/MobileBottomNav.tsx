@@ -1,5 +1,6 @@
 import React from 'react';
 import { ShoppingBag, Layers, Receipt, MoreHorizontal } from 'lucide-react';
+import { useLanguage } from '../../lib/i18n';
 
 export type MobileTab = 'billing' | 'stock' | 'bills' | 'more';
 
@@ -14,30 +15,28 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({
   setActiveTab,
   cartCount,
 }) => {
+  const { t } = useLanguage();
+
   const tabs = [
     {
       id: 'billing' as MobileTab,
-      label: 'New Bill',
-      sublabel: 'नया बिल',
+      label: t.newBill,
       icon: ShoppingBag,
       badge: cartCount > 0 ? cartCount : undefined,
     },
     {
       id: 'stock' as MobileTab,
-      label: 'Stock',
-      sublabel: 'स्टॉक',
+      label: t.stock,
       icon: Layers,
     },
     {
       id: 'bills' as MobileTab,
-      label: 'History',
-      sublabel: 'बिक्री पर्ची',
+      label: t.bills,
       icon: Receipt,
     },
     {
       id: 'more' as MobileTab,
-      label: 'More',
-      sublabel: 'अन्य मेन्यू',
+      label: t.more,
       icon: MoreHorizontal,
     },
   ];

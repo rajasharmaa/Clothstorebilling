@@ -43,6 +43,7 @@ import { toast } from 'sonner';
 import { ReceiptModal } from './ReceiptModal';
 import { SplitPaymentModal } from './SplitPaymentModal';
 import { DynamicUPIQR } from './DynamicUPIQR';
+import { useLanguage } from '../../lib/i18n';
 
 interface POSBillingProps {
   currentUser: User;
@@ -61,6 +62,8 @@ const CATEGORY_ICONS: Record<string, string> = {
 const getCategoryIcon = (cat: string) => CATEGORY_ICONS[cat] || '🏷️';
 
 export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSettings }) => {
+  const { t } = useLanguage();
+
   // Master data
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -856,7 +859,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
                     </div>
                     {item.discountAmount > 0 && (
                       <span className="text-[10px] text-emerald-600 font-bold mt-0.5">
-                        बचत: -₹{item.discountAmount.toFixed(2)}
+                        {t.saved} -₹{item.discountAmount.toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -926,7 +929,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
 
             {billSummary.totalDiscount > 0 && (
               <div className="flex justify-between text-emerald-700 font-semibold">
-                <span>Total Discount (छूट):</span>
+                <span>{t.totalDiscount}</span>
                 <span className="font-bold font-mono">
                   -₹{billSummary.totalDiscount.toFixed(2)}
                 </span>
@@ -934,7 +937,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
             )}
 
             <div className="pt-1.5 border-t border-slate-200 flex justify-between items-baseline">
-              <span className="text-sm font-bold text-slate-800">Final Payable:</span>
+              <span className="text-sm font-bold text-slate-800">{t.finalPayable}</span>
               <span className="text-xl font-black text-blue-700 font-mono">
                 ₹{billSummary.finalPayable.toFixed(2)}
               </span>
@@ -942,7 +945,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
 
             {billSummary.totalDiscount > 0 && (
               <div className="bg-emerald-100/70 border border-emerald-300 text-emerald-800 px-2 py-1 rounded-md text-[11px] font-bold text-center">
-                🎉 YOU SAVED ₹{billSummary.totalDiscount.toFixed(2)}!
+                🎉 {t.youSaved} ₹{billSummary.totalDiscount.toFixed(2)}!
               </div>
             )}
           </div>
@@ -950,11 +953,11 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
           {/* Payment Mode Selector */}
           <div className="grid grid-cols-5 gap-1.5 pt-1 text-xs font-bold">
             {[
-              { id: 'CASH', label: '💵 Cash' },
-              { id: 'UPI', label: '📱 UPI' },
-              { id: 'CARD', label: '💳 Card' },
-              { id: 'SPLIT', label: '✂️ Split' },
-              { id: 'DUE', label: '⏳ Udhaar' },
+              { id: 'CASH', label: `💵 ${t.cash}` },
+              { id: 'UPI', label: `📱 ${t.upi}` },
+              { id: 'CARD', label: `💳 ${t.card}` },
+              { id: 'SPLIT', label: `✂️ ${t.split}` },
+              { id: 'DUE', label: `⏳ ${t.creditDue}` },
             ].map(({ id, label }) => {
               const isSelected = paymentMode === id;
               return (
@@ -1205,7 +1208,7 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                  Discount Per Piece (छूट प्रति पीस ₹)
+                  {t.itemDiscountPrompt}
                 </label>
                 <input
                   type="number"

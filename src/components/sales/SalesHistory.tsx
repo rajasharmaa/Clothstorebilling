@@ -110,16 +110,16 @@ export const SalesHistory: React.FC<SalesHistoryProps> = ({ currentUser, shopSet
   };
 
   const handleWhatsAppShare = async (sale: Sale) => {
-    toast.loading('WhatsApp PDF तैयार हो रहा है...', { id: 'sales-pdf' });
+    toast.loading('Generating WhatsApp PDF...', { id: 'sales-pdf' });
     try {
       const res = await sharePDFOnWhatsApp(sale, shopSettings, sale.customerMobile);
       if (res.method === 'web_share') {
-        toast.success('WhatsApp पर बिल PDF शेयर कर दिया गया!', { id: 'sales-pdf' });
+        toast.success('Bill PDF shared via WhatsApp!', { id: 'sales-pdf' });
       } else {
-        toast.success('PDF डाउनलोड हो गया! WhatsApp खुल गया है।', { id: 'sales-pdf' });
+        toast.success('PDF downloaded! WhatsApp opened.', { id: 'sales-pdf' });
       }
     } catch (e) {
-      toast.error('WhatsApp शेयर करने में समस्या आई', { id: 'sales-pdf' });
+      toast.error('Failed to share on WhatsApp', { id: 'sales-pdf' });
     }
   };
 

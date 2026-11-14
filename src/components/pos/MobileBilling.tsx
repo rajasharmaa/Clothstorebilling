@@ -41,6 +41,7 @@ import { SplitPaymentModal } from './SplitPaymentModal';
 import { DynamicUPIQR } from './DynamicUPIQR';
 import { generateWhatsAppMessage, triggerPrint } from '../../lib/receipt';
 import { sharePDFOnWhatsApp } from '../../lib/pdfGenerator';
+import { useLanguage } from '../../lib/i18n';
 
 interface MobileBillingProps {
   currentUser: User;
@@ -53,6 +54,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
   shopSettings,
   onCartChange,
 }) => {
+  const { t, language } = useLanguage();
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
 
@@ -515,16 +517,16 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
   };
 
   const handleWhatsAppShare = async (sale: Sale) => {
-    toast.loading('WhatsApp PDF तैयार हो रहा है...', { id: 'mob-pdf' });
+    toast.loading(language === 'hi' ? 'WhatsApp PDF तैयार हो रहा है...' : 'Preparing WhatsApp PDF...', { id: 'mob-pdf' });
     try {
       const res = await sharePDFOnWhatsApp(sale, shopSettings, sale.customerMobile);
       if (res.method === 'web_share') {
-        toast.success('WhatsApp पर बिल PDF शेयर कर दिया गया!', { id: 'mob-pdf' });
+        toast.success(language === 'hi' ? 'WhatsApp पर बिल PDF शेयर कर दिया गया!' : 'Bill PDF shared via WhatsApp!', { id: 'mob-pdf' });
       } else {
-        toast.success('PDF डाउनलोड हो गया! WhatsApp चैट खुल गई है।', { id: 'mob-pdf' });
+        toast.success(language === 'hi' ? 'PDF डाउनलोड हो गया! WhatsApp चैट खुल गई है।' : 'PDF downloaded! WhatsApp chat opened.', { id: 'mob-pdf' });
       }
     } catch (e) {
-      toast.error('WhatsApp शेयर करने में समस्या आई', { id: 'mob-pdf' });
+      toast.error(language === 'hi' ? 'WhatsApp शेयर करने में समस्या आई' : 'Could not share on WhatsApp', { id: 'mob-pdf' });
     }
   };
 
@@ -690,7 +692,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
             </div>
             {billSummary.totalDiscount > 0 && (
               <div className="text-[11px] text-emerald-400 font-bold font-mono">
-                बचत ₹{billSummary.totalDiscount.toFixed(0)}
+                {t.saved} ₹{billSummary.totalDiscount.toFixed(0)}
               </div>
             )}
           </div>
@@ -699,7 +701,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
             onClick={() => setIsCartSheetOpen(true)}
             className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-black text-xs rounded-xl shadow-lg shadow-blue-500/30 flex items-center space-x-1"
           >
-            <span>View Bill & Print →</span>
+            <span>{t.viewBillPrint} →</span>
           </button>
         </div>
       )}
@@ -1031,7 +1033,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
                       </div>
                       {item.discountAmount > 0 && (
                         <div className="text-[10px] text-emerald-600 font-semibold">
-                          छूट: -₹{item.discountAmount.toFixed(2)}
+                          {t.discount}: -₹{item.discountAmount.toFixed(2)}
                         </div>
                       )}
                     </div>
@@ -1133,7 +1135,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
               {/* Payment Mode Selector */}
               <div>
                 <label className="block font-bold text-slate-700 uppercase mb-2">
-                  Payment Mode Chuniye:
+                  Select Payment Mode:
                 </label>
                 <div className="grid grid-cols-4 gap-2 font-bold">
                   {(['CASH', 'UPI', 'CARD', 'DUE'] as const).map((mode) => (
@@ -1240,7 +1242,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
                 className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-black text-sm rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2"
               >
                 <Printer className="w-5 h-5" />
-                <span>PRINT SLIP (पर्ची प्रिंट करें)</span>
+                <span>{t.generatePrintSlip.toUpperCase()}</span>
               </button>
 
               <div className="grid grid-cols-2 gap-2">

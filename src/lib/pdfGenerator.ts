@@ -259,7 +259,7 @@ export async function sharePDFOnWhatsApp(
         await navigator.share({
           files: [file],
           title: `${settings.shopName} Bill #${sale.billNumber}`,
-          text: `नमस्ते! ${settings.shopName} से आपका बिल #${sale.billNumber} (कुल: Rs. ${sale.finalPayable.toFixed(2)})। धन्यवाद!`,
+          text: `Greetings from ${settings.shopName}! Here is your bill #${sale.billNumber} (Total: Rs. ${sale.finalPayable.toFixed(2)}). Thank you for shopping with us!`,
         });
         return { success: true, method: 'web_share' };
       } catch (err) {
@@ -274,7 +274,7 @@ export async function sharePDFOnWhatsApp(
 
   const cleanMobile = targetMobile.length === 10 ? `91${targetMobile}` : targetMobile;
   const message = encodeURIComponent(
-    `नमस्ते! *${settings.shopName}* से आपका बिल *#${sale.billNumber}* (Total: *Rs. ${sale.finalPayable.toFixed(2)}*) तैयार है।\n\nPDF बिल डाउनलोड हो गया है, कृपया इसे सुरक्षित रखें। धन्यवाद! 🙏`
+    `Greetings from *${settings.shopName}*! Here is your bill *#${sale.billNumber}* (Total: *Rs. ${sale.finalPayable.toFixed(2)}*).\n\nPDF invoice has been downloaded. Thank you for shopping with us! 🙏`
   );
 
   const whatsappUrl = cleanMobile

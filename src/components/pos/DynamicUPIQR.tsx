@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { StorageService } from '../../lib/storage';
+import { useLanguage } from '../../lib/i18n';
 
 interface DynamicUPIQRProps {
   amount: number;
@@ -37,6 +38,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
   compact = false,
   onUpiUpdated,
 }) => {
+  const { t, language } = useLanguage();
   // Read current saved settings or fallback to props
   const savedSettings = StorageService.getSettings();
   const [currentUpiId, setCurrentUpiId] = useState<string>(
@@ -102,7 +104,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
   const handleCopyUPI = () => {
     navigator.clipboard.writeText(currentUpiId);
     setCopied(true);
-    toast.success(`UPI ID कॉपी किया: ${currentUpiId}`);
+    toast.success(language === 'hi' ? `UPI ID कॉपी किया: ${currentUpiId}` : `Copied UPI ID: ${currentUpiId}`);
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -116,11 +118,11 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
     e.preventDefault();
     const cleanUpi = editUpiInput.trim();
     if (!cleanUpi) {
-      toast.error('कृपया मान्य UPI ID दर्ज करें (जैसे: 7000627153@upi)');
+      toast.error(language === 'hi' ? 'कृपया मान्य UPI ID दर्ज करें' : 'Please enter a valid UPI ID');
       return;
     }
     if (!cleanUpi.includes('@')) {
-      toast.error('UPI ID में "@" होना ज़रूरी है (उदा. number@paytm या name@okhdfcbank)');
+      toast.error(language === 'hi' ? 'UPI ID में "@" होना ज़रूरी है' : 'UPI ID must contain "@" (e.g. number@paytm)');
       return;
     }
 
@@ -141,13 +143,15 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
       onUpiUpdated(cleanUpi, cleanPayee);
     }
 
-    toast.success(`UPI ID अपडेट हो गई: ${cleanUpi}! अब सारा पेमेंट इसी पर आएगा।`);
+    toast.success(language === 'hi' ? `UPI ID अपडेट हो गई: ${cleanUpi}` : `UPI ID updated: ${cleanUpi}`);
   };
 
   if (amount <= 0) {
     return (
       <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-center text-xs text-amber-800">
-        ₹0.00 के लिए UPI QR उपलब्ध नहीं है। कृपया कार्ट में कपड़े जोड़ें।
+        {language === 'hi'
+          ? '₹0.00 के लिए UPI QR उपलब्ध नहीं है। कृपया कार्ट में कपड़े जोड़ें।'
+          : 'UPI QR is not available for ₹0.00. Add items to cart.'}
       </div>
     );
   }
@@ -161,7 +165,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
         <div className="w-full flex items-center justify-between gap-1 mb-2">
           <div className="flex items-center space-x-1.5 bg-emerald-100 text-emerald-800 text-[11px] font-black px-2.5 py-0.5 rounded-full">
             <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-            <span>लाइव UPI QR (Auto Amount)</span>
+            <span>{t.liveUPIQR}</span>
           </div>
 
           <div className="flex items-center space-x-1">
@@ -169,20 +173,20 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
               type="button"
               onClick={handleOpenEditModal}
               className="flex items-center space-x-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-lg active:scale-95 transition-all border border-emerald-200"
-              title="अपनी UPI ID बदलें"
+              title="Edit UPI ID"
             >
               <Edit3 className="w-3 h-3" />
-              <span>UPI ID बदलें</span>
+              <span>{t.editUPI}</span>
             </button>
 
             <button
               type="button"
               onClick={() => setIsFullscreen(true)}
               className="flex items-center space-x-1 text-[11px] font-bold text-slate-600 hover:text-blue-600 bg-slate-100 px-2 py-0.5 rounded-lg active:scale-95 transition-all"
-              title="ग्राहक को दिखाने के लिए बड़ा करें"
+              title="Fullscreen QR"
             >
               <Maximize2 className="w-3 h-3" />
-              <span>बड़ा करें</span>
+              <span>{t.fullscreen}</span>
             </button>
           </div>
         </div>
@@ -199,7 +203,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
               />
             ) : (
               <div className="w-24 h-24 flex items-center justify-center text-xs text-slate-400">
-                QR बन रहा है...
+                {t.generatingQR}
               </div>
             )}
           </div>
@@ -207,7 +211,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
           {/* Details on Right */}
           <div className="flex-1 min-w-0 text-left space-y-1">
             <div className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">
-              स्कैन करने योग्य कुल राशि
+              {t.scanToPay}
             </div>
             <div className="text-xl font-black text-emerald-600 tracking-tight leading-none font-mono">
               ₹{formattedAmount}
@@ -258,10 +262,10 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
                 </div>
                 <div>
                   <h3 className="font-black text-sm text-slate-900 leading-tight">
-                    अपनी UPI ID सेट करें
+                    {language === 'hi' ? 'अपनी UPI ID सेट करें' : 'Set Shop UPI ID'}
                   </h3>
                   <p className="text-[10px] text-slate-500">
-                    पेमेंट सीधे इसी बैंक/UPI खाते में जाएगा
+                    {language === 'hi' ? 'पेमेंट सीधे इसी बैंक/UPI खाते में जाएगा' : 'Payments will go directly to this bank account'}
                   </p>
                 </div>
               </div>
@@ -277,12 +281,12 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
             <form onSubmit={handleSaveUpi} className="space-y-3">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  UPI ID (उदा. PhonePe, GPay, Paytm):
+                  {language === 'hi' ? 'UPI ID (उदा. PhonePe, GPay, Paytm):' : 'UPI ID (e.g. PhonePe, GPay, Paytm):'}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="उदा. 7000627153@upi या yourname@okaxis"
+                  placeholder={language === 'hi' ? 'उदा. 7000627153@upi या yourname@okaxis' : 'e.g. 7000627153@upi'}
                   value={editUpiInput}
                   onChange={(e) => setEditUpiInput(e.target.value)}
                   className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -308,7 +312,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  खाता धारक / दुकान का नाम (Payee Name):
+                  {language === 'hi' ? 'खाता धारक / दुकान का नाम (Payee Name):' : 'Account Holder / Shop Name:'}
                 </label>
                 <input
                   type="text"
@@ -322,7 +326,9 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
               <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-[11px] text-emerald-800 flex items-start space-x-2">
                 <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                 <span>
-                  यह UPI ID हमेशा के लिए सेव हो जाएगी। ग्राहक द्वारा QR कोड स्कैन करते ही पेमेंट सीधे इसी खाते में पहुंचेगा।
+                  {language === 'hi'
+                    ? 'यह UPI ID हमेशा के लिए सेव हो जाएगी। ग्राहक द्वारा QR कोड स्कैन करते ही पेमेंट सीधे इसी खाते में पहुंचेगा।'
+                    : 'This UPI ID will be permanently saved. Customers scanning the QR will pay directly to this account.'}
                 </span>
               </div>
 
@@ -332,14 +338,14 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
                   onClick={() => setIsEditModalOpen(false)}
                   className="flex-1 py-2.5 bg-slate-100 text-slate-700 font-bold rounded-xl active:scale-95 text-xs"
                 >
-                  रद्द करें
+                  {language === 'hi' ? 'रद्द करें' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl active:scale-95 text-xs shadow-md flex items-center justify-center space-x-1.5"
                 >
                   <Save className="w-3.5 h-3.5" />
-                  <span>सेव करें (Save)</span>
+                  <span>{language === 'hi' ? 'सेव करें (Save)' : 'Save UPI ID'}</span>
                 </button>
               </div>
             </form>
@@ -360,18 +366,20 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
 
             <div className="inline-flex items-center space-x-1.5 bg-emerald-100 text-emerald-800 text-xs font-black px-3 py-1 rounded-full mb-3">
               <ShieldCheck className="w-4 h-4" />
-              <span>सुरक्षित डिजिटल UPI भुगतान</span>
+              <span>{language === 'hi' ? 'सुरक्षित डिजिटल UPI भुगतान' : 'Secure Digital UPI Payment'}</span>
             </div>
 
             <h3 className="text-xl font-black text-slate-900 uppercase tracking-tight">
               {currentPayeeName}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              किसी भी UPI ऐप (GPay, PhonePe, Paytm) से स्कैन करें
+              {language === 'hi' ? 'किसी भी UPI ऐप (GPay, PhonePe, Paytm) से स्कैन करें' : 'Scan with any UPI App (GPay, PhonePe, Paytm)'}
             </p>
 
             <div className="my-4 py-2 px-4 bg-emerald-50 rounded-2xl border border-emerald-200 inline-block">
-              <div className="text-xs font-bold text-emerald-800 uppercase">कुल भुगतान राशि</div>
+              <div className="text-xs font-bold text-emerald-800 uppercase">
+                {language === 'hi' ? 'कुल भुगतान राशि' : 'Total Payable Amount'}
+              </div>
               <div className="text-4xl font-black text-emerald-600 tracking-tight leading-none mt-1">
                 ₹{formattedAmount}
               </div>
@@ -395,7 +403,7 @@ export const DynamicUPIQR: React.FC<DynamicUPIQRProps> = ({
               onClick={() => setIsFullscreen(false)}
               className="mt-5 w-full py-3 bg-slate-900 text-white font-bold text-sm rounded-xl active:scale-95 shadow-md"
             >
-              बंद करें (Close)
+              {language === 'hi' ? 'बंद करें (Close)' : 'Close'}
             </button>
           </div>
         </div>

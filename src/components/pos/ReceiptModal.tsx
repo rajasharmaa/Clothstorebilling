@@ -25,6 +25,7 @@ import {
   sharePDFOnWhatsApp,
 } from '../../lib/pdfGenerator';
 import { toast } from 'sonner';
+import { useLanguage } from '../../lib/i18n';
 
 interface ReceiptModalProps {
   sale: Sale | null;
@@ -41,6 +42,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
   onClose,
   onNewBill,
 }) => {
+  const { t, language } = useLanguage();
   const [printFormat, setPrintFormat] = useState<'80mm' | '58mm' | 'A4'>(
     settings.receiptPaperSize || '80mm'
   );
@@ -69,22 +71,22 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
   const handleSharePDF = async () => {
     const cleanMobile = shareMobile.replace(/\D/g, '');
     if (cleanMobile.length > 0 && cleanMobile.length < 10) {
-      toast.error('कृपया पूरा 10 अंकों का मोबाइल नंबर दर्ज करें');
+      toast.error(language === 'hi' ? 'कृपया पूरा 10 अंकों का मोबाइल नंबर दर्ज करें' : 'Please enter a valid 10-digit mobile number');
       return;
     }
 
     setIsSharingPdf(true);
-    toast.loading('WhatsApp PDF तैयार हो रहा है...', { id: 'pdf-share' });
+    toast.loading(language === 'hi' ? 'WhatsApp PDF तैयार हो रहा है...' : 'Generating WhatsApp PDF...', { id: 'pdf-share' });
 
     try {
       const res = await sharePDFOnWhatsApp(sale, settings, cleanMobile);
       if (res.method === 'web_share') {
-        toast.success('WhatsApp पर बिल PDF शेयर कर दिया गया!', { id: 'pdf-share' });
+        toast.success(language === 'hi' ? 'WhatsApp पर बिल PDF शेयर कर दिया गया!' : 'Bill PDF shared via WhatsApp!', { id: 'pdf-share' });
       } else {
-        toast.success('PDF डाउनलोड हो गया! WhatsApp चैट खुल गई है।', { id: 'pdf-share' });
+        toast.success(language === 'hi' ? 'PDF डाउनलोड हो गया! WhatsApp चैट खुल गई है।' : 'PDF downloaded! WhatsApp chat opened.', { id: 'pdf-share' });
       }
     } catch (e) {
-      toast.error('PDF शेयर करने में समस्या आई', { id: 'pdf-share' });
+      toast.error(language === 'hi' ? 'PDF शेयर करने में समस्या आई' : 'Failed to share PDF', { id: 'pdf-share' });
     } finally {
       setIsSharingPdf(false);
     }
@@ -94,9 +96,9 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
   const handleDownloadPDF = () => {
     try {
       downloadReceiptPDF(sale, settings);
-      toast.success('Bill PDF डाउनलोड हो गया!');
+      toast.success(language === 'hi' ? 'Bill PDF डाउनलोड हो गया!' : 'Bill PDF downloaded!');
     } catch (e) {
-      toast.error('PDF डाउनलोड करने में त्रुटि आई');
+      toast.error(language === 'hi' ? 'PDF डाउनलोड करने में त्रुटि आई' : 'Error downloading PDF');
     }
   };
 
@@ -170,7 +172,7 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
               title="Share PDF bill on WhatsApp"
             >
               <Share2 className="w-3.5 h-3.5" />
-              <span>WhatsApp PDF भेजें</span>
+              <span>{t.sendWhatsApp}</span>
             </button>
 
             <button

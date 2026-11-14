@@ -24,6 +24,7 @@ import { ReturnManager } from '../returns/ReturnManager';
 import { ExpenseManager } from '../expenses/ExpenseManager';
 import { ReportsManager } from '../reports/ReportsManager';
 import { SettingsManager } from '../settings/SettingsManager';
+import { useLanguage, LanguageSelector } from '../../lib/i18n';
 
 export type MoreSubView =
   | 'dashboard'
@@ -53,62 +54,63 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
   onNavigateToBilling,
   initialSubView = null,
 }) => {
+  const { t, language } = useLanguage();
   const [subView, setSubView] = useState<MoreSubView>(initialSubView);
 
   const menuItems = [
     {
       id: 'dashboard' as const,
-      title: 'दुकान डैशबोर्ड',
-      subtitle: 'Dashboard & Daily Stats',
+      title: language === 'hi' ? 'दुकान डैशबोर्ड' : 'Store Dashboard',
+      subtitle: language === 'hi' ? 'दैनिक बिक्री व ग्राफ' : 'Daily Stats & Analytics',
       icon: LayoutDashboard,
       color: 'bg-indigo-50 text-indigo-600 border-indigo-200',
     },
     {
       id: 'purchases' as const,
-      title: 'खरीदी एंट्री',
-      subtitle: 'Purchase Stock In',
+      title: language === 'hi' ? 'खरीदी एंट्री' : 'Purchase Stock In',
+      subtitle: language === 'hi' ? 'नया माल स्टॉक में जोड़ें' : 'Add wholesale stock',
       icon: Truck,
       color: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     },
     {
       id: 'customers' as const,
-      title: 'ग्राहक व उधारी',
-      subtitle: 'Customer & Khata Dues',
+      title: language === 'hi' ? 'ग्राहक व उधारी' : 'Customers & Dues',
+      subtitle: language === 'hi' ? 'उधारी खाता व लेन-देन' : 'Khata & Credit ledger',
       icon: Users,
       color: 'bg-blue-50 text-blue-600 border-blue-200',
     },
     {
       id: 'suppliers' as const,
-      title: 'सप्लायर (थोक विक्रेता)',
-      subtitle: 'Suppliers & Vendors',
+      title: language === 'hi' ? 'सप्लायर (थोक विक्रेता)' : 'Suppliers & Vendors',
+      subtitle: language === 'hi' ? 'होलसेल व्यापारी लिस्ट' : 'Wholesale vendor list',
       icon: Building,
       color: 'bg-amber-50 text-amber-600 border-amber-200',
     },
     {
       id: 'returns' as const,
-      title: 'वापसी व एक्सचेंज',
-      subtitle: 'Returns & Exchange',
+      title: language === 'hi' ? 'वापसी व एक्सचेंज' : 'Returns & Exchange',
+      subtitle: language === 'hi' ? 'कपड़ा वापसी व रिफंड' : 'Item return & refund',
       icon: RotateCcw,
       color: 'bg-orange-50 text-orange-600 border-orange-200',
     },
     {
       id: 'expenses' as const,
-      title: 'दुकान खर्चे',
-      subtitle: 'Daily Expenses',
+      title: language === 'hi' ? 'दुकान खर्चे' : 'Store Expenses',
+      subtitle: language === 'hi' ? 'चाय, किराया, बिजली बिल' : 'Tea, rent, electricity',
       icon: Wallet,
       color: 'bg-rose-50 text-rose-600 border-rose-200',
     },
     {
       id: 'reports' as const,
-      title: 'रिपोर्ट व हिसाब',
-      subtitle: 'Sales & Profit Reports',
+      title: language === 'hi' ? 'रिपोर्ट व हिसाब' : 'Reports & Accounts',
+      subtitle: language === 'hi' ? 'मुनाफा व बिक्री रिपोर्ट' : 'Sales & profit reports',
       icon: BarChart3,
       color: 'bg-purple-50 text-purple-600 border-purple-200',
     },
     {
       id: 'settings' as const,
-      title: 'दुकान सेटिंग',
-      subtitle: 'Receipt & Shop Settings',
+      title: language === 'hi' ? 'दुकान सेटिंग' : 'Shop Settings',
+      subtitle: language === 'hi' ? 'दुकान नाम, UPI व प्रिंट' : 'Receipt, UPI & profile',
       icon: Settings,
       color: 'bg-slate-100 text-slate-700 border-slate-300',
     },
@@ -127,7 +129,7 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
             className="flex items-center space-x-2 text-slate-700 active:scale-95 transition-all font-bold text-sm bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-xl"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>मेन्यू (Back)</span>
+            <span>{language === 'hi' ? 'वापस मेन्यू' : 'Back to Menu'}</span>
           </button>
 
           <div className="text-right">
@@ -215,7 +217,9 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
                 {currentUser.role}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">लॉगिन स्टाफ खाता</p>
+            <p className="text-xs text-slate-500 mt-0.5">
+              {language === 'hi' ? 'लॉगिन स्टाफ खाता' : 'Logged-in Staff'}
+            </p>
           </div>
         </div>
 
@@ -223,14 +227,32 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
           onClick={onSwitchUser}
           className="px-3 py-2 bg-slate-100 hover:bg-slate-200 active:scale-95 text-xs font-bold text-slate-700 rounded-xl transition-all"
         >
-          बदलें (Switch)
+          {language === 'hi' ? 'बदलें (Switch)' : 'Switch'}
         </button>
+      </div>
+
+      {/* Language Switcher Card */}
+      <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm mb-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg">
+            🌐
+          </div>
+          <div>
+            <div className="font-black text-slate-900 text-sm">
+              {language === 'hi' ? 'ऐप भाषा (Language)' : 'App Language'}
+            </div>
+            <p className="text-xs text-slate-500">
+              {language === 'hi' ? 'वर्तमान: हिन्दी' : 'Current: English'}
+            </p>
+          </div>
+        </div>
+        <LanguageSelector />
       </div>
 
       {/* Title */}
       <div className="px-1 mb-2.5 flex items-center justify-between">
         <h3 className="text-xs font-black text-slate-500 uppercase tracking-wider">
-          अन्य प्रबंधन टूल (Management Menu)
+          {language === 'hi' ? 'अन्य प्रबंधन टूल (Management Menu)' : 'Management Menu'}
         </h3>
       </div>
 
@@ -270,7 +292,9 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
         </h4>
         <p className="text-[11px] text-slate-600 mt-0.5">{shopSettings.tagline}</p>
         <p className="text-[11px] text-slate-500 mt-0.5">{shopSettings.address}</p>
-        <p className="text-[11px] text-slate-600 font-bold mt-1">फोन: {shopSettings.phone}</p>
+        <p className="text-[11px] text-slate-600 font-bold mt-1">
+          {language === 'hi' ? 'फोन:' : 'Phone:'} {shopSettings.phone}
+        </p>
         <div className="mt-3 text-[10px] text-slate-500 uppercase tracking-widest font-bold">
           Non-GST Retail Cash Memo System • Mobile POS
         </div>

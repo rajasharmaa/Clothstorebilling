@@ -196,7 +196,7 @@ export function generateThermalReceiptHTML(
       sale.totalDiscount > 0
         ? `
     <tr style="color: #15803d; font-weight: 700;">
-      <td>Total Discount (बचत):</td>
+      <td>Total Discount:</td>
       <td class="text-right" style="font-family: monospace;">-₹${sale.totalDiscount.toFixed(2)}</td>
     </tr>`
         : ''
@@ -564,7 +564,7 @@ export async function triggerPrint(
     try {
       const base64Html = btoa(unescape(encodeURIComponent(html)));
       window.location.href = `rawbt:data:text/html;base64,${base64Html}`;
-      return { success: true, message: 'OTG थर्मल प्रिंटर पर भेजा गया!' };
+      return { success: true, message: 'Sent to OTG Thermal Printer!' };
     } catch (e) {
       console.warn('RawBT intent failed, falling back to spooler', e);
     }
@@ -601,7 +601,7 @@ export async function triggerPrint(
             resolve({ success: true });
           } catch (err) {
             console.error('Iframe print error', err);
-            resolve({ success: false, message: 'प्रिंट एरर' });
+            resolve({ success: false, message: 'Print error' });
           }
         }, 400);
       } else {
