@@ -17,9 +17,12 @@ export function generateThermalReceiptHTML(
   paperWidth: '58mm' | '80mm' = '80mm'
 ): string {
   const is58 = paperWidth === '58mm';
-  const widthMm = is58 ? '52mm' : '72mm';
-  const fontSize = is58 ? '11px' : '13px';
-  const headingSize = is58 ? '15px' : '18px';
+  // Physical printable area on thermal heads: 58mm roll has ~48mm printable head, 80mm has ~72mm
+  const printableWidth = is58 ? '48mm' : '72mm';
+  const baseFontSize = is58 ? '12px' : '13px';
+  const headingSize = is58 ? '16px' : '19px';
+  const smallFontSize = is58 ? '11px' : '11.5px';
+  const microFontSize = is58 ? '10.5px' : '11px';
 
   const dateObj = new Date(sale.date);
   const formattedDate = dateObj.toLocaleDateString('en-IN', {
@@ -36,15 +39,22 @@ export function generateThermalReceiptHTML(
   const itemsHtml = sale.items
     .map((item, idx) => {
       const itemOriginalTotal = (item.rate * item.quantity).toFixed(2);
+      const variantDetails = [item.size ? `Size: ${item.size}` : '', item.color ? `Color: ${item.color}` : '']
+        .filter(Boolean)
+        .join(' | ');
 
       return `
-      <tr style="border-bottom: 1px dotted #ccc;">
-        <td style="padding: 4px 0; vertical-align: top;">
-          <div style="font-weight: 700; color: #000;">${idx + 1}. ${item.productName}</div>
-          <div style="font-size: 85%; color: #444;">${item.size ? `Size: ${item.size}` : ''}${item.size && item.color ? ' | ' : ''}${item.color ? `Color: ${item.color}` : ''}</div>
+      <tr style="border-bottom: 1px dashed #000;">
+        <td style="padding: 4px 0; vertical-align: top; word-break: break-word; overflow-wrap: break-word;">
+          <div style="font-weight: 700; color: #000; font-size: ${baseFontSize}; line-height: 1.35;">${idx + 1}. ${item.productName || 'Item'}</div>
+          ${
+            variantDetails
+              ? `<div style="font-size: ${smallFontSize}; font-weight: 600; color: #000; margin-top: 1px; line-height: 1.3;">${variantDetails}</div>`
+              : ''
+          }
         </td>
-        <td style="padding: 4px 2px; text-align: center; vertical-align: top; font-weight: 600;">${item.quantity}</td>
-        <td style="padding: 4px 0; text-align: right; vertical-align: top; font-weight: 700; font-family: monospace;">₹${itemOriginalTotal}</td>
+        <td style="padding: 4px 2px; text-align: center; vertical-align: top; font-weight: 700; color: #000; font-size: ${baseFontSize}; white-space: nowrap;">${item.quantity}</td>
+        <td style="padding: 4px 0; text-align: right; vertical-align: top; font-weight: 700; color: #000; font-size: ${baseFontSize}; font-family: monospace; white-space: nowrap;">₹${itemOriginalTotal}</td>
       </tr>
     `;
     })
@@ -70,98 +80,110 @@ export function generateThermalReceiptHTML(
       margin: 0;
       padding: 0;
       background: #fff;
+      color: #000;
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       margin: 0 auto;
-      padding: ${is58 ? '8px 6px 24px 6px' : '12px 10px 32px 10px'};
-      width: ${widthMm};
-      font-size: ${fontSize};
-      line-height: 1.3;
+      padding: ${is58 ? '4px 3px 20px 3px' : '6px 4px 28px 4px'};
+      width: ${printableWidth};
+      max-width: ${printableWidth};
+      font-size: ${baseFontSize};
+      line-height: 1.35;
       color: #000;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     .text-center { text-align: center; }
     .text-right { text-align: right; }
     .bold { font-weight: 700; }
     .divider {
-      border-top: 1px dashed #222;
-      margin: 8px 0;
+      border-top: 1px dashed #000;
+      margin: 6px 0;
     }
     .double-divider {
       border-top: 2px dashed #000;
-      margin: 8px 0;
+      margin: 6px 0;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: inherit;
+      color: #000;
     }
     th {
       border-bottom: 1px dashed #000;
-      padding: 4px 0;
+      padding: 3px 0;
       font-weight: 700;
-      font-size: 90%;
+      font-size: ${smallFontSize};
       text-transform: uppercase;
+      color: #000;
     }
     .savings-box {
       border: 1px dashed #000;
       background: #f4f4f4;
-      padding: 6px;
-      margin: 8px 0;
+      padding: 5px;
+      margin: 6px 0;
       text-align: center;
       font-weight: 800;
-      font-size: 105%;
+      font-size: ${baseFontSize};
       letter-spacing: 0.3px;
+      color: #000;
     }
     .footer-box {
-      margin-top: 10px;
-      font-size: 85%;
-      color: #222;
+      margin-top: 8px;
+      font-size: ${smallFontSize};
+      color: #000;
       line-height: 1.35;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
     @media print {
-      body {
-        width: 100%;
-        padding: ${is58 ? '4px 4px 20px 4px' : '8px 8px 24px 8px'};
+      html, body {
+        width: ${printableWidth} !important;
+        max-width: ${printableWidth} !important;
+        margin: 0 auto !important;
+        padding: ${is58 ? '2mm 1mm 10mm 1mm' : '3mm 2mm 12mm 2mm'} !important;
+        color: #000 !important;
       }
     }
   </style>
 </head>
 <body>
   <div class="text-center">
-    <div style="font-size: ${headingSize}; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase;">
-      ${settings.shopName}
+    <div style="font-size: ${headingSize}; font-weight: 900; letter-spacing: 0.5px; text-transform: uppercase; color: #000; line-height: 1.25;">
+      ${settings?.shopName || 'TARA COLLECTION'}
     </div>
-    <div style="font-size: 90%; font-weight: 700; margin-top: 2px; color: #222;">
-      ${settings.tagline}
+    <div style="font-size: ${smallFontSize}; font-weight: 700; margin-top: 2px; color: #000; line-height: 1.3;">
+      ${settings?.tagline || ''}
     </div>
-    <div style="font-size: 82%; margin-top: 3px; color: #333; line-height: 1.25;">
-      ${settings.address}
+    <div style="font-size: ${microFontSize}; font-weight: 600; margin-top: 2px; color: #000; line-height: 1.35;">
+      ${settings?.address || ''}
     </div>
-    <div style="font-size: 85%; font-weight: 700; margin-top: 2px;">
-      Ph: ${settings.phone}
+    <div style="font-size: ${smallFontSize}; font-weight: 700; margin-top: 2px; color: #000;">
+      Ph: ${settings?.phone || ''}
     </div>
-    <div style="margin-top: 6px; font-weight: 800; font-size: 92%; letter-spacing: 0.5px;">
+    <div style="margin-top: 5px; font-weight: 800; font-size: ${smallFontSize}; letter-spacing: 0.5px; color: #000;">
       *** RETAIL CASH MEMO ***
     </div>
   </div>
 
   <div class="divider"></div>
 
-  <table>
+  <table style="line-height: 1.35;">
     <tr>
-      <td style="padding: 1px 0;"><strong>Memo #:</strong> <span style="font-family: monospace; font-weight: 700;">${sale.billNumber}</span></td>
-      <td class="text-right" style="padding: 1px 0;"><strong>Date:</strong> ${formattedDate}</td>
+      <td style="padding: 1px 0; font-size: ${smallFontSize}; vertical-align: top;"><strong>Memo #:</strong> <span style="font-family: monospace; font-weight: 700;">${sale.billNumber}</span></td>
+      <td class="text-right" style="padding: 1px 0; font-size: ${smallFontSize}; vertical-align: top; white-space: nowrap;"><strong>Date:</strong> ${formattedDate}</td>
     </tr>
     <tr>
-      <td style="padding: 1px 0;"><strong>Cashier:</strong> ${sale.cashierName}</td>
-      <td class="text-right" style="padding: 1px 0;"><strong>Time:</strong> ${formattedTime}</td>
+      <td style="padding: 1px 0; font-size: ${smallFontSize}; vertical-align: top;"><strong>Cashier:</strong> ${sale.cashierName}</td>
+      <td class="text-right" style="padding: 1px 0; font-size: ${smallFontSize}; vertical-align: top; white-space: nowrap;"><strong>Time:</strong> ${formattedTime}</td>
     </tr>
     ${
       sale.customerName || sale.customerMobile
         ? `
     <tr>
-      <td colspan="2" style="padding: 2px 0;">
+      <td colspan="2" style="padding: 2px 0; font-size: ${smallFontSize}; vertical-align: top; word-break: break-word;">
         <strong>Customer:</strong> ${sale.customerName || 'Walk-in'} 
         ${sale.customerMobile ? `(${sale.customerMobile})` : ''}
       </td>
@@ -175,9 +197,9 @@ export function generateThermalReceiptHTML(
   <table>
     <thead>
       <tr>
-        <th style="text-align: left; width: 58%;">Item</th>
+        <th style="text-align: left; width: 56%;">Item</th>
         <th style="text-align: center; width: 14%;">Qty</th>
-        <th style="text-align: right; width: 28%;">Total</th>
+        <th style="text-align: right; width: 30%;">Total</th>
       </tr>
     </thead>
     <tbody>
@@ -187,17 +209,17 @@ export function generateThermalReceiptHTML(
 
   <div class="divider"></div>
 
-  <table style="line-height: 1.4;">
+  <table style="line-height: 1.4; font-size: ${baseFontSize};">
     <tr>
-      <td style="color: #444;">Subtotal:</td>
-      <td class="text-right" style="font-family: monospace;">₹${sale.totalOriginalAmount.toFixed(2)}</td>
+      <td style="color: #000; font-weight: 600;">Subtotal:</td>
+      <td class="text-right" style="font-family: monospace; font-weight: 700; white-space: nowrap;">₹${sale.totalOriginalAmount.toFixed(2)}</td>
     </tr>
     ${
       sale.totalDiscount > 0
         ? `
-    <tr style="color: #15803d; font-weight: 700;">
+    <tr style="color: #000; font-weight: 700;">
       <td>Total Discount:</td>
-      <td class="text-right" style="font-family: monospace;">-₹${sale.totalDiscount.toFixed(2)}</td>
+      <td class="text-right" style="font-family: monospace; font-weight: 700; white-space: nowrap;">-₹${sale.totalDiscount.toFixed(2)}</td>
     </tr>`
         : ''
     }
@@ -206,9 +228,9 @@ export function generateThermalReceiptHTML(
   <div class="double-divider"></div>
 
   <table>
-    <tr style="font-size: 125%; font-weight: 900;">
+    <tr style="font-size: ${is58 ? '14px' : '16px'}; font-weight: 900; color: #000;">
       <td>GRAND TOTAL:</td>
-      <td class="text-right" style="font-family: monospace;">₹${sale.finalPayable.toFixed(2)}</td>
+      <td class="text-right" style="font-family: monospace; white-space: nowrap;">₹${sale.finalPayable.toFixed(2)}</td>
     </tr>
   </table>
 
@@ -223,26 +245,26 @@ export function generateThermalReceiptHTML(
 
   <div class="divider"></div>
 
-  <table style="line-height: 1.35;">
+  <table style="line-height: 1.4; font-size: ${baseFontSize};">
     <tr>
-      <td style="color: #444;">Payment Mode:</td>
-      <td class="text-right"><strong>${sale.paymentMode}</strong></td>
+      <td style="color: #000; font-weight: 600;">Payment Mode:</td>
+      <td class="text-right" style="font-weight: 700; white-space: nowrap;">${sale.paymentMode}</td>
     </tr>
     <tr>
-      <td style="color: #444;">Amount Paid:</td>
-      <td class="text-right" style="font-family: monospace;">₹${sale.amountReceived.toFixed(2)}</td>
+      <td style="color: #000; font-weight: 600;">Amount Paid:</td>
+      <td class="text-right" style="font-family: monospace; font-weight: 700; white-space: nowrap;">₹${sale.amountReceived.toFixed(2)}</td>
     </tr>
     ${
       sale.balanceDue > 0
         ? `
-    <tr style="font-weight: 700; color: #b91c1c;">
+    <tr style="font-weight: 700; color: #000;">
       <td>Balance Due:</td>
-      <td class="text-right" style="font-family: monospace;">₹${sale.balanceDue.toFixed(2)}</td>
+      <td class="text-right" style="font-family: monospace; white-space: nowrap;">₹${sale.balanceDue.toFixed(2)}</td>
     </tr>`
         : `
     <tr>
-      <td style="color: #444;">Balance Due:</td>
-      <td class="text-right" style="font-family: monospace;">₹0.00</td>
+      <td style="color: #000; font-weight: 600;">Balance Due:</td>
+      <td class="text-right" style="font-family: monospace; font-weight: 700; white-space: nowrap;">₹0.00</td>
     </tr>`
     }
   </table>
@@ -250,9 +272,13 @@ export function generateThermalReceiptHTML(
   <div class="double-divider"></div>
 
   <div class="text-center footer-box">
-    <div style="font-weight: 700;">${settings.receiptFooter}</div>
-    <div style="margin-top: 4px; font-size: 85%; color: #333;">${settings.exchangePolicy}</div>
-    <div style="margin-top: 8px; font-size: 75%; color: #666;">Generated via TARA POS System</div>
+    <div style="font-weight: 700; font-size: ${smallFontSize}; color: #000;">${settings?.receiptFooter || 'Thank you! Visit again.'}</div>
+    ${
+      settings?.exchangePolicy
+        ? `<div style="margin-top: 4px; font-size: ${microFontSize}; font-weight: 600; color: #000; line-height: 1.35;">${settings.exchangePolicy}</div>`
+        : ''
+    }
+    <div style="margin-top: 6px; font-size: ${microFontSize}; font-weight: 600; color: #000;">Generated via TARA POS System</div>
   </div>
 </body>
 </html>
