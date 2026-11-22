@@ -531,7 +531,7 @@ export function generateWhatsAppMessage(sale: Sale, settings: ShopSettings): str
 }
 
 /**
- * Trigger print via Electron silent print, Android USB OTG, or hidden iframe
+ * Trigger print via Native Android Print, Android USB OTG RawBT, Electron silent print, or hidden iframe
  */
 export async function triggerPrint(
   sale: Sale,
@@ -540,26 +540,54 @@ export async function triggerPrint(
   mode: 'auto' | 'rawbt' | 'standard' = 'auto'
 ): Promise<{ success: boolean; message?: string }> {
   const isElectron = typeof window !== 'undefined' && !!(window as any).electronAPI;
+  const androidPrint = typeof window !== 'undefined' ? (window as any).AndroidPrint : undefined;
 
   const html =
     paperWidth === 'A4'
       ? generateA4ReceiptHTML(sale, settings)
       : generateThermalReceiptHTML(sale, settings, paperWidth);
 
-  // 1. Electron Silent Print (for Windows Desktop / EXE)
+  // 1. Android Native APK Environment (Phone APK)
+  if (androidPrint && typeof androidPrint.printHTML === 'function') {
+    const base64Html = btoa(unescape(encodeURIComponent(html)));
+
+    if (mode === 'rawbt') {
+      try {
+        const sent = androidPrint.printRawBT(base64Html);
+        return {
+          success: sent,
+          message: sent
+            ? 'OTG Thermal Printer ko command bhej di gayi!'
+            : 'RawBT Thermal Printer app kholi ja rahi hai...',
+        };
+      } catch (e) {
+        console.warn('AndroidPrint RawBT failed, falling back to system print', e);
+      }
+    }
+
+    // Default or fallback on Android: Native System PrintManager
+    try {
+      androidPrint.printHTML(html, `Bill_${sale.billNumber}`);
+      return { success: true, message: 'Android Print dialog khul raha hai...' };
+    } catch (e) {
+      console.warn('AndroidPrint printHTML failed', e);
+    }
+  }
+
+  // 2. Electron Silent Print (for Windows Desktop / Portable EXE)
   if (isElectron) {
     try {
       const res = await (window as any).electronAPI.silentPrint({
         html,
         deviceName: '',
       });
-      if (res && res.success) return { success: true };
+      if (res && res.success) return { success: true, message: 'Print sent to desktop printer!' };
     } catch (e) {
       console.warn('Electron silent print failed, falling back', e);
     }
   }
 
-  // 2. Direct Android USB OTG RawBT Print (Instant 1-tap print without dialogs)
+  // 3. Direct Android USB OTG RawBT Print via custom URI (Browser fallback)
   if (mode === 'rawbt') {
     try {
       const base64Html = btoa(unescape(encodeURIComponent(html)));
@@ -570,7 +598,7 @@ export async function triggerPrint(
     }
   }
 
-  // 3. Robust Hidden Iframe Print (Works seamlessly on Android WebView & Mobile without popup blocks)
+  // 4. Robust Hidden Iframe Print (Browser & Web fallback)
   return new Promise((resolve) => {
     try {
       const iframe = document.createElement('iframe');
@@ -598,10 +626,11 @@ export async function triggerPrint(
                 document.body.removeChild(iframe);
               }
             }, 3000);
-            resolve({ success: true });
+            resolve({ success: true, message: 'Print window opened' });
           } catch (err) {
             console.error('Iframe print error', err);
-            resolve({ success: false, message: 'Print error' });
+            window.print();
+            resolve({ success: true });
           }
         }, 400);
       } else {
@@ -623,12 +652,6 @@ export function printViaOTGUsb(
   sale: Sale,
   settings: ShopSettings,
   paperWidth: '58mm' | '80mm' = '80mm'
-): void {
-  const html = generateThermalReceiptHTML(sale, settings, paperWidth);
-  try {
-    const base64Html = btoa(unescape(encodeURIComponent(html)));
-    window.location.href = `rawbt:data:text/html;base64,${base64Html}`;
-  } catch (err) {
-    triggerPrint(sale, settings, paperWidth);
-  }
+): Promise<{ success: boolean; message?: string }> {
+  return triggerPrint(sale, settings, paperWidth, 'rawbt');
 }

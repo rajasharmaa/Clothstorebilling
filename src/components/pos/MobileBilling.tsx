@@ -28,6 +28,7 @@ import {
   QrCode,
   Share2,
   Printer,
+  Cable,
   RotateCcw,
   Sparkles,
   ArrowRight,
@@ -512,7 +513,15 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
     if (!res.success && res.message) {
       toast.error(res.message);
     } else {
-      toast.success('Parchi print ho rahi hai!');
+      toast.success(res.message || 'Parchi print dialog open!');
+    }
+  };
+
+  const handleOTGPrint = async (sale: Sale) => {
+    const res = await triggerPrint(sale, shopSettings, shopSettings.receiptPaperSize || '80mm', 'rawbt');
+    if (res.message) {
+      if (res.success) toast.success(res.message);
+      else toast.info(res.message);
     }
   };
 
@@ -1237,13 +1246,23 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
 
             {/* Quick Action Buttons */}
             <div className="space-y-2.5 pt-2">
-              <button
-                onClick={() => handlePrintSlip(finalizedSale)}
-                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-black text-sm rounded-2xl shadow-lg shadow-blue-500/30 flex items-center justify-center space-x-2"
-              >
-                <Printer className="w-5 h-5" />
-                <span>{t.generatePrintSlip.toUpperCase()}</span>
-              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => handlePrintSlip(finalizedSale)}
+                  className="py-3 px-2 bg-blue-600 hover:bg-blue-700 active:scale-98 text-white font-black text-xs rounded-xl shadow-md shadow-blue-500/30 flex items-center justify-center space-x-1.5"
+                >
+                  <Printer className="w-4 h-4" />
+                  <span>🖨️ {language === 'hi' ? 'सिस्टम प्रिंट' : 'SYSTEM PRINT'}</span>
+                </button>
+
+                <button
+                  onClick={() => handleOTGPrint(finalizedSale)}
+                  className="py-3 px-2 bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black text-xs rounded-xl shadow-md shadow-emerald-600/30 flex items-center justify-center space-x-1.5"
+                >
+                  <Cable className="w-4 h-4" />
+                  <span>🔌 {language === 'hi' ? 'OTG थर्मल' : 'OTG USB PRINT'}</span>
+                </button>
+              </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <button
@@ -1251,7 +1270,7 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
                   className="py-3 bg-emerald-50 hover:bg-emerald-100 active:scale-98 text-emerald-800 border border-emerald-300 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5"
                 >
                   <Share2 className="w-4 h-4" />
-                  <span>WhatsApp</span>
+                  <span>WhatsApp PDF</span>
                 </button>
                 <button
                   onClick={() => setIsReceiptModalOpen(true)}

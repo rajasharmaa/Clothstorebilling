@@ -259,7 +259,13 @@ export const ReceiptModal: React.FC<ReceiptModalProps> = ({
 
           <div className="flex items-center space-x-2">
             <button
-              onClick={() => triggerPrint(sale, settings, printFormat, 'rawbt')}
+              onClick={async () => {
+                const res = await triggerPrint(sale, settings, printFormat, 'rawbt');
+                if (res.message) {
+                  if (res.success) toast.success(res.message);
+                  else toast.info(res.message);
+                }
+              }}
               className="flex items-center space-x-1.5 px-3 py-2.5 rounded-xl text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 transition-colors active:scale-95"
               title="Print directly to USB OTG thermal printer"
             >
