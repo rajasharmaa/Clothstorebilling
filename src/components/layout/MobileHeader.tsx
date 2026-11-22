@@ -1,7 +1,8 @@
 import React from 'react';
 import { User, ShopSettings } from '../../types';
-import { UserCheck, Shield, ChevronDown } from 'lucide-react';
+import { UserCheck, Shield, ChevronDown, Sun, Moon } from 'lucide-react';
 import { LanguageSelector } from '../../lib/i18n';
+import { useTheme } from '../../lib/theme';
 
 interface MobileHeaderProps {
   currentUser: User;
@@ -14,6 +15,8 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
   shopSettings,
   onSwitchUser,
 }) => {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="bg-slate-900 text-white px-3 py-2 flex items-center justify-between shrink-0 shadow-md select-none sticky top-0 z-30">
       <div className="flex items-center space-x-2 min-w-0">
@@ -31,6 +34,15 @@ export const MobileHeader: React.FC<MobileHeaderProps> = ({
       </div>
 
       <div className="flex items-center space-x-1.5 shrink-0">
+        {/* Dark / Light Mode Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 hover:text-white"
+          title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+        >
+          {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-300" />}
+        </button>
+
         {/* Language Switcher */}
         <LanguageSelector compact className="!text-[11px] !py-0.5 !px-2 bg-slate-800 text-slate-200 border-slate-700" />
 

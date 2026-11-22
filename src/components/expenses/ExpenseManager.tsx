@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Expense, User, ShopSettings, PaymentMode } from '../../types';
 import { StorageService } from '../../lib/storage';
-import { Wallet, Plus, Search, Calendar, Tag, Trash2, X } from 'lucide-react';
+import { Wallet, Plus, Search, Calendar, Tag, Trash2, X, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { exportToCSV } from '../../lib/csvExport';
 
 interface ExpenseManagerProps {
   currentUser: User;
@@ -64,6 +65,21 @@ export const ExpenseManager: React.FC<ExpenseManagerProps> = ({ currentUser, sho
     reload();
   };
 
+  const handleExportCSV = () => {
+    const headers = ['Title / Reason', 'Category', 'Amount (₹)', 'Date', 'Payment Mode', 'Recorded By', 'Notes'];
+    const rows = filtered.map((e) => [
+      e.title,
+      e.category,
+      e.amount,
+      e.date,
+      e.paymentMode,
+      e.recordedBy,
+      e.notes || '',
+    ]);
+    exportToCSV(`expenses_${new Date().toISOString().split('T')[0]}`, headers, rows);
+    toast.success('Expenses exported to CSV');
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 select-none">
       {/* Header Bar */}
@@ -82,10 +98,18 @@ export const ExpenseManager: React.FC<ExpenseManagerProps> = ({ currentUser, sho
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2">
           <div className="text-xs font-bold bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
             {language === 'hi' ? 'कुल खर्चे:' : 'Total Expenses:'} <span className="font-mono text-rose-600">₹{totalExpenseFiltered.toFixed(2)}</span>
           </div>
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center space-x-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs"
+            title="Download Expenses CSV"
+          >
+            <Download className="w-4 h-4" />
+            <span>CSV</span>
+          </button>
           <button
             onClick={() => setIsModalOpen(true)}
             className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"

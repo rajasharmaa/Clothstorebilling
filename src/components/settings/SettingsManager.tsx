@@ -16,10 +16,13 @@ import {
   KeyRound,
   Plus,
   Trash2,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { runDiscountVerification } from '../../lib/discount.test';
 import { LanguageSelector } from '../../lib/i18n';
+import { useTheme } from '../../lib/theme';
 
 interface SettingsManagerProps {
   currentUser: User;
@@ -35,6 +38,7 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
   const [activeSubTab, setActiveSubTab] = useState<'shop' | 'billing' | 'users' | 'backup' | 'tests'>(
     'shop'
   );
+  const { theme, toggleTheme } = useTheme();
 
   // Settings state
   const [formSettings, setFormSettings] = useState<ShopSettings>({ ...shopSettings });
@@ -231,18 +235,39 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                 </h3>
               </div>
 
-              {/* Language Switcher Setting */}
-              <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-xl flex items-center justify-between mb-4">
-                <div>
-                  <div className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
-                    <span>🌐</span>
-                    <span>Application Language / भाषा</span>
+              {/* Language & Theme Switcher Settings */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                <div className="p-3 bg-blue-50/60 border border-blue-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                      <span>🌐</span>
+                      <span>Language / भाषा</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      English, हिन्दी, मराठी
+                    </p>
                   </div>
-                  <p className="text-[11px] text-slate-500 mt-0.5">
-                    Select English or हिन्दी across all screens
-                  </p>
+                  <LanguageSelector />
                 </div>
-                <LanguageSelector />
+
+                <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div>
+                    <div className="font-bold text-slate-800 text-xs flex items-center space-x-1.5">
+                      {theme === 'dark' ? <Moon className="w-3.5 h-3.5 text-blue-500" /> : <Sun className="w-3.5 h-3.5 text-amber-500" />}
+                      <span>Theme Mode</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 mt-0.5">
+                      {theme === 'dark' ? 'Dark Mode Active' : 'Light Mode Active'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={toggleTheme}
+                    className="px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs font-bold shadow-xs hover:bg-slate-100"
+                  >
+                    {theme === 'dark' ? '☀️ Light' : '🌙 Dark'}
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -423,6 +448,59 @@ export const SettingsManager: React.FC<SettingsManagerProps> = ({
                     <option value="58mm">58mm Thermal (Compact)</option>
                     <option value="A4">A4 Full Sheet</option>
                   </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 uppercase mb-1">
+                    Currency & Symbol
+                  </label>
+                  <select
+                    value={formSettings.currencySymbol}
+                    onChange={(e) => {
+                      const sym = e.target.value;
+                      const cur =
+                        sym === '₹'
+                          ? 'INR'
+                          : sym === '$'
+                          ? 'USD'
+                          : sym === '€'
+                          ? 'EUR'
+                          : sym === '£'
+                          ? 'GBP'
+                          : 'INR';
+                      setFormSettings({
+                        ...formSettings,
+                        currencySymbol: sym,
+                        currency: cur,
+                      });
+                    }}
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg font-bold"
+                  >
+                    <option value="₹">₹ INR (Indian Rupee)</option>
+                    <option value="$">$ USD (US Dollar)</option>
+                    <option value="€">€ EUR (Euro)</option>
+                    <option value="£">£ GBP (British Pound)</option>
+                    <option value="AED">AED (UAE Dirham)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 uppercase mb-1">
+                    Default Item Discount (₹/Piece)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={formSettings.defaultItemDiscountPerPiece}
+                    onChange={(e) =>
+                      setFormSettings({
+                        ...formSettings,
+                        defaultItemDiscountPerPiece: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg font-mono font-bold"
+                  />
                 </div>
               </div>
 

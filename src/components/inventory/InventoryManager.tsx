@@ -20,9 +20,11 @@ import {
   X,
   CheckCircle,
   Package,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { exportToCSV } from '../../lib/csvExport';
 
 interface InventoryManagerProps {
   currentUser: User;
@@ -125,6 +127,68 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
     }
   };
 
+  const handleExportCSV = () => {
+    if (activeTab === 'stock') {
+      const headers = [
+        'Product Name',
+        'Category',
+        'SKU',
+        'Barcode',
+        'Size',
+        'Color',
+        'Cost Price',
+        'Selling Price',
+        'MRP',
+        'Stock Qty',
+        'Min Alert',
+        'Stock Valuation',
+      ];
+      const rows = filteredVariants.map(({ product, variant }) => [
+        product.name,
+        product.category,
+        variant.sku,
+        variant.barcode,
+        variant.size,
+        variant.color,
+        variant.purchasePrice,
+        variant.sellingPrice,
+        variant.mrp,
+        variant.stock,
+        variant.minStockAlert,
+        variant.stock * variant.purchasePrice,
+      ]);
+      exportToCSV(`inventory_stock_${new Date().toISOString().split('T')[0]}`, headers, rows);
+      toast.success('Inventory stock exported to CSV');
+    } else {
+      const headers = [
+        'Date & Time',
+        'Movement Type',
+        'Product Name',
+        'SKU',
+        'Qty Changed',
+        'Prev Stock',
+        'New Stock',
+        'Reference ID',
+        'Staff',
+        'Notes',
+      ];
+      const rows = filteredLedger.map((entry) => [
+        new Date(entry.timestamp).toLocaleString('en-IN'),
+        entry.type,
+        entry.productName,
+        entry.sku,
+        entry.quantityChanged,
+        entry.previousStock,
+        entry.newStock,
+        entry.referenceId,
+        entry.actorName,
+        entry.notes || '',
+      ]);
+      exportToCSV(`stock_ledger_${new Date().toISOString().split('T')[0]}`, headers, rows);
+      toast.success('Stock audit ledger exported to CSV');
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 select-none">
       {/* Top Header */}
@@ -219,6 +283,15 @@ export const InventoryManager: React.FC<InventoryManagerProps> = ({
             </button>
           </div>
         )}
+
+        <button
+          onClick={handleExportCSV}
+          className="flex items-center space-x-1 px-3 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all shadow-xs"
+          title="Download CSV"
+        >
+          <Download className="w-3.5 h-3.5" />
+          <span>{language === 'hi' ? 'CSV डाउनलोड' : 'Export CSV'}</span>
+        </button>
       </div>
 
       {/* Content Area */}

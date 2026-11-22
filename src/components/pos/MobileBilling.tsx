@@ -35,7 +35,9 @@ import {
   UserCheck,
   ChevronUp,
   SlidersHorizontal,
+  Camera,
 } from 'lucide-react';
+import { CameraScannerModal } from './CameraScannerModal';
 import { toast } from 'sonner';
 import { ReceiptModal } from './ReceiptModal';
 import { SplitPaymentModal } from './SplitPaymentModal';
@@ -103,6 +105,73 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
   // Success Screen State
   const [finalizedSale, setFinalizedSale] = useState<Sale | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const handleScannedBarcode = (code: string) => {
+    const trimmed = code.trim().toLowerCase();
+    for (const p of products) {
+      const matched = p.variants.find(
+        (v) =>
+          v.barcode.toLowerCase() === trimmed ||
+          v.sku.toLowerCase() === trimmed
+      );
+      if (matched) {
+        if (matched.stock <= 0 && !shopSettings.allowNegativeStock) {
+          toast.error(`Out of Stock: ${matched.size} / ${matched.color}`);
+          return;
+        }
+        const defaultPerPc = defaultPerPieceDiscount;
+        const lineBase = round2(matched.sellingPrice * 1);
+        const initialDiscount = round2(Math.min(lineBase, defaultPerPc * 1));
+        const discPercent = lineBase > 0 ? round2((initialDiscount / lineBase) * 100) : 0;
+        setCart((prev) => {
+          const existingIndex = prev.findIndex((i) => i.variantId === matched.id);
+          if (existingIndex >= 0) {
+            const item = prev[existingIndex];
+            const newQty = item.quantity + 1;
+            const updatedLineBase = round2(item.rate * newQty);
+            const disc = round2(Math.min(updatedLineBase, defaultPerPc * newQty));
+            const updated = [...prev];
+            updated[existingIndex] = {
+              ...item,
+              quantity: newQty,
+              discountAmount: disc,
+              discountPercent: updatedLineBase > 0 ? round2((disc / updatedLineBase) * 100) : 0,
+              finalPrice: round2(updatedLineBase - disc),
+            };
+            return updated;
+          } else {
+            return [
+              {
+                variantId: matched.id,
+                productId: p.id,
+                productName: p.name,
+                category: p.category,
+                size: matched.size,
+                color: matched.color,
+                sku: matched.sku || '',
+                barcode: matched.barcode || '',
+                mrp: matched.mrp,
+                rate: matched.sellingPrice,
+                purchasePrice: matched.purchasePrice,
+                quantity: 1,
+                discountType: 'AMOUNT',
+                discountPercent: discPercent,
+                discountAmount: initialDiscount,
+                finalPrice: round2(lineBase - initialDiscount),
+                availableStock: matched.stock,
+              },
+              ...prev,
+            ];
+          }
+        });
+        toast.success(`Scanned: ${p.name} (${matched.size})`);
+        return;
+      }
+    }
+    setSearchQuery(code);
+    toast.info(`Search for: ${code}`);
+  };
 
   // Max allowed discount based on user role
   const maxAllowedPercent = useMemo(() => {
@@ -563,6 +632,14 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
               </button>
             )}
           </div>
+
+          <button
+            onClick={() => setIsScannerOpen(true)}
+            className="p-2 bg-slate-100 hover:bg-slate-200 active:scale-95 border border-slate-300 text-slate-700 rounded-xl flex items-center justify-center shrink-0 h-10 w-10"
+            title="Scan Barcode with Camera"
+          >
+            <Camera className="w-5 h-5 text-blue-600" />
+          </button>
 
           <button
             onClick={() => setIsCustomItemSheetOpen(true)}
@@ -1313,6 +1390,13 @@ export const MobileBilling: React.FC<MobileBillingProps> = ({
           setSplitDetails(split);
           toast.success('Split details saved');
         }}
+      />
+
+      {/* Camera Barcode Scanner Modal */}
+      <CameraScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScannedBarcode}
       />
     </div>
   );

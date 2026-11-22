@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-export type Language = 'en' | 'hi';
+export type Language = 'en' | 'hi' | 'mr';
 
 export interface Translations {
   // Navigation & Tabs
@@ -242,162 +242,134 @@ export const translations: Record<Language, Translations> = {
     langName: 'हिन्दी',
     selectLanguage: 'भाषा (Language)',
   },
+  mr: {
+    newBill: 'नवीन बिल',
+    stock: 'स्टॉक',
+    bills: 'विक्री पावत्या',
+    more: 'इतर मेनू',
+    dashboard: 'डॅशबोर्ड',
+    products: 'कपडे व उत्पादने',
+    inventory: 'इन्व्हेंटरी / स्टॉक',
+    purchases: 'खरेदी नोंद',
+    suppliers: 'घाऊक विक्रेते',
+    customers: 'ग्राहक व उधारी',
+    returns: 'परतावा व बदल',
+    expenses: 'दुकानाचे खर्च',
+    reports: 'अहवाल व हिशोब',
+    settings: 'दुकान सेटिंग',
+
+    searchPlaceholder: 'कपड्याचे नाव, प्रकार किंवा माप शोधा...',
+    customItem: '+ इतर आयटम',
+    allCategories: 'सर्व कपडे',
+    inStock: 'उपलब्ध',
+    sizes: 'मापे',
+    activeCart: 'चालू बिल',
+    emptyCart: 'कार्ट रिकामी आहे',
+    tapToAdd: 'बिलात जोडण्यासाठी टॅप करा',
+    discount: 'सूट',
+    billDiscount: 'बिल सूट:',
+    subtotal: 'एकूण रक्कम:',
+    totalDiscount: 'एकूण सूट:',
+    finalPayable: 'अंतिम देय रक्कम:',
+    saved: 'बचत:',
+    youSaved: 'आपली बचत',
+    generatePrintSlip: 'बिल बनवा व प्रिंट करा',
+    customerMobile: 'ग्राहक मोबाईल (पर्यायी)',
+    customerName: 'ग्राहकाचे नाव',
+    itemDiscountPrompt: 'प्रति नग सूट (₹)',
+    applyDiscount: 'सूट लागू करा',
+    viewBillPrint: 'बिल पहा व प्रिंट करा',
+    clearCart: 'कार्ट साफ करा',
+
+    cash: 'रोख (Cash)',
+    upi: 'UPI',
+    card: 'कार्ड',
+    split: 'स्प्लिट',
+    creditDue: 'उधारी',
+    cashReceived: 'मिळालेली रोख:',
+    changeReturn: 'परत द्यायची रक्कम:',
+
+    liveUPIQR: 'लाईव्ह UPI QR कोड',
+    scanToPay: 'पैसे भरण्यासाठी स्कॅन करा',
+    editUPI: 'UPI ID बदला',
+    fullscreen: 'मोठे करा',
+    generatingQR: 'QR तयार होत आहे...',
+    enterUPI: 'आपला दुकान UPI ID टाका',
+    upiHelp: 'पैसे थेट आपल्या बँक खात्यात जमा होतील',
+    saveUPI: 'UPI ID सेव्ह करा',
+
+    receiptTitle: 'पावती प्रिंट व WhatsApp पाठवा',
+    otgUsbPrint: '🔌 OTG USB प्रिंट',
+    thermalPrint: 'थर्मल प्रिंट',
+    sendWhatsApp: 'WhatsApp PDF पाठवा',
+    downloadPDF: 'PDF डाउनलोड करा',
+    close: 'बंद करा',
+    shareOnWhatsApp: 'WhatsApp वर पाठवा',
+    enterPhone: '१० अंकी मोबाईल नंबर टाका',
+
+    searchBills: 'बिल क्र., ग्राहक किंवा फोनने शोधा...',
+    today: 'आज',
+    yesterday: 'काल',
+    last7Days: 'मागील ७ दिवस',
+    allBills: 'सर्व बिले',
+    totalSales: 'एकूण:',
+    cancelBill: 'बिल रद्द करा',
+    reprint: 'पुन्हा प्रिंट करा',
+
+    langName: 'मराठी',
+    selectLanguage: 'भाषा',
+  },
 };
 
-// Global Hindi translation dictionary for whole-software multi-language support
-export const HINDI_DICTIONARY: Record<string, string> = {
-  // Sidebar & Navigation
-  'Dashboard': 'दुकान डैशबोर्ड',
-  'New Billing': 'नया बिल (POS)',
-  'Sales History': 'बिक्री पर्चियां (इतिहास)',
-  'Products': 'कपड़े व उत्पाद',
-  'Inventory / Stock': 'इन्वेंट्री / स्टॉक',
-  'Purchase Entry': 'खरीदी एंट्री (Stock In)',
-  'Suppliers': 'थोक सप्लायर',
-  'Customers': 'ग्राहक व उधारी खाता',
-  'Returns & Exchange': 'वापसी व एक्सचेंज',
-  'Expenses': 'दुकान खर्चे',
-  'Reports & Analytics': 'रिपोर्ट व हिसाब',
-  'Settings': 'दुकान सेटिंग्स',
-  'Retail POS & Stock': 'कपड़ा बिलिंग व स्टॉक',
-  'All Items': 'सभी कपड़े',
-
-  // Common UI words
-  'Search': 'खोजें',
-  'Add': 'जोड़ें',
-  'Add New': 'नया जोड़ें',
-  'Save': 'सेव करें',
-  'Cancel': 'रद्द करें',
-  'Delete': 'हटाएं',
-  'Edit': 'संशोधित करें',
-  'Update': 'अपडेट करें',
-  'Close': 'बंद करें',
-  'Print': 'प्रिंट करें',
-  'Download': 'डाउनलोड करें',
-  'Share': 'शेयर करें',
-  'Export': 'एक्सपोर्ट',
-  'Import': 'इम्पोर्ट',
-  'Actions': 'कार्य',
-  'Status': 'स्थिति',
-  'Active': 'सक्रिय',
-  'Inactive': 'निष्क्रिय',
-  'Date': 'तारीख',
-  'Total': 'कुल',
-  'Subtotal': 'सबटोटल',
-  'Quantity': 'मात्रा (Pcs)',
-  'Qty': 'मात्रा',
-  'Price': 'कीमत',
-  'Rate': 'दर (₹)',
-  'Amount': 'राशि (₹)',
-  'Discount': 'छूट',
-  'Final Payable': 'कुल देय राशि',
-  'Paid': 'जमा',
-  'Due': 'बाकी',
-  'Balance Due': 'उधारी बाकी',
-  'Cash Received': 'प्राप्त कैश',
-  'Change to Return': 'वापसी राशि',
-  'Payment Mode': 'भुगतान प्रकार',
-  'Cash': 'कैश',
-  'UPI': 'यूपीआई',
-  'Card': 'कार्ड',
-  'Split': 'स्प्लिट',
-  'Credit / Due': 'उधारी',
-  'Customer': 'ग्राहक',
-  'Mobile': 'मोबाइल',
-  'Customer Name': 'ग्राहक का नाम',
-  'Customer Mobile': 'ग्राहक का मोबाइल',
-  'Note': 'विवरण / नोट',
-  'Yes': 'हाँ',
-  'No': 'नहीं',
-
-  // Dashboard Metrics
-  "Today's Sales": 'आज की कुल बिक्री',
-  "Today's Revenue": 'आज की आमदनी',
-  "Today's Bills": 'आज के कुल बिल',
-  'Items Sold': 'बिके हुए कपड़े (Pcs)',
-  'Gross Profit': 'सकल मुनाफा (Profit)',
-  'Total Inventory Value': 'स्टॉक का कुल मूल्य',
-  'Low Stock Items': 'कम स्टॉक वाले कपड़े',
-  'Out of Stock': 'स्टॉक खत्म (0 Pcs)',
-  'Top Selling Products': 'सबसे ज्यादा बिकने वाले कपड़े',
-  'Recent Bills': 'हाल ही की बिक्री पर्चियां',
-  'Recent Invoices': 'हाल की पर्चियां',
-  'Sales by Category': 'केटेगरी अनुसार बिक्री',
-  'Payment Modes': 'पेमेंट मोड विश्लेषण',
-  'Quick Billing': 'तुरंत नया बिल बनाएं',
-
-  // Products & Inventory
-  'Product Name': 'कपड़े का नाम',
-  'Item Code': 'आइटम कोड / बारकोड',
-  'Category': 'केटेगरी',
-  'Select Category': 'केटेगरी चुनें',
-  'Purchase Price': 'खरीद भाव (₹)',
-  'Selling Price': 'बिक्री भाव (₹)',
-  'Sizes': 'उपलब्ध साइज़',
-  'Colors': 'रंग (Color)',
-  'Stock': 'स्टॉक',
-  'In Stock': 'स्टॉक में उपलब्ध',
-  'Low Stock Alert': 'कम स्टॉक चेतावनी',
-  'Add Product': 'नया कपड़ा जोड़ें',
-  'Add New Product': 'नया कपड़ा स्टॉक में जोड़ें',
-  'Edit Product': 'कपड़ा विवरण बदलें',
-  'Adjust Stock': 'स्टॉक घटाएं या बढ़ाएं',
-  'Stock Adjustment': 'स्टॉक एडजस्टमेंट',
-  'Total Products': 'कुल कपड़े (प्रकार)',
-  'Total Pcs in Stock': 'स्टॉक में कुल पीस',
-  'Add Variant': 'साइज़/कलर जोड़ें',
-
-  // Purchases
-  'Add Purchase': 'नया माल स्टॉक में जोड़ें (खरीदी)',
-  'Purchase Stock In': 'खरीदी स्टॉक एंट्री',
-  'Supplier': 'थोक सप्लायर',
-  'Invoice No': 'खरीदी बिल / चालान नं.',
-  'Purchase Date': 'खरीदी तारीख',
-  'Total Purchase Cost': 'कुल खरीदी लागत',
-
-  // Customers & Khata
-  'Add Customer': 'नया ग्राहक जोड़ें',
-  'Customer Ledger': 'ग्राहक उधारी खाता',
-  'Receive Payment': 'उधारी जमा करें',
-  'Payment History': 'भुगतान इतिहास',
-  'Settle Due': 'खाता क्लियर करें',
-
-  // Suppliers
-  'Add Supplier': 'नया सप्लायर जोड़ें',
-  'Supplier Name': 'सप्लायर का नाम',
-  'Contact Person': 'संपर्क व्यक्ति',
-  'Firm Name': 'कंपनी या दुकान का नाम',
-
-  // Returns & Expenses
-  'Return Item': 'कपड़ा वापसी / रिटर्न',
-  'Return Reason': 'वापसी का कारण',
-  'Refund': 'रिफंड (पैसे वापसी)',
-  'Exchange': 'एक्सचेंज (बदली)',
-  'Add Expense': 'दुकान खर्चा जोड़ें',
-  'Expense Category': 'खर्चे की श्रेणी',
-  'Expense Amount': 'खर्चा राशि (₹)',
-  'Daily Store Expenses': 'दुकान के दैनिक खर्चे',
-
-  // Reports
-  'Sales Report': 'बिक्री रिपोर्ट',
-  'Profit Report': 'मुनाफा रिपोर्ट',
-  'Stock Report': 'स्टॉक रिपोर्ट',
-  'Daily Summary': 'दैनिक समरी',
-  'Monthly Summary': 'मासिक समरी',
-
-  // User Switch
-  'Switch Cashier / Role': 'स्टाफ / रोल बदलें',
-  'Select Staff Account': 'स्टाफ खाता चुनें',
-  'Enter 4-Digit Security PIN': '4-अंकों का सुरक्षा पिन दर्ज करें',
-  'Switch User': 'यूज़र बदलें',
-
-  // Receipt & Print
-  'Generate & Print Slip': 'बिल बनाएं व पर्ची प्रिंट करें',
-  'Thermal Print': 'थर्मल प्रिंट',
-  'Send WhatsApp PDF': 'WhatsApp PDF भेजें',
-  'Download PDF': 'PDF डाउनलोड करें',
-  'Bill Number': 'बिल नंबर',
-  'Cash Memo': 'कैश मेमो',
+// Devanagari Dictionary (Hindi and Marathi)
+export const MULTILANG_DICTIONARY: Record<string, { hi: string; mr: string }> = {
+  'Dashboard': { hi: 'दुकान डैशबोर्ड', mr: 'दुकान डॅशबोर्ड' },
+  'New Billing': { hi: 'नया बिल (POS)', mr: 'नवीन बिल (POS)' },
+  'Sales History': { hi: 'बिक्री पर्चियां (इतिहास)', mr: 'विक्री इतिहास' },
+  'Products': { hi: 'कपड़े व उत्पाद', mr: 'कपडे व उत्पादने' },
+  'Inventory / Stock': { hi: 'इन्वेंट्री / स्टॉक', mr: 'इन्व्हेंटरी / स्टॉक' },
+  'Purchase Entry': { hi: 'खरीदी एंट्री (Stock In)', mr: 'खरेदी नोंद (Stock In)' },
+  'Suppliers': { hi: 'थोक सप्लायर', mr: 'घाऊक विक्रेते' },
+  'Customers': { hi: 'ग्राहक व उधारी खाता', mr: 'ग्राहक व उधारी खाते' },
+  'Returns & Exchange': { hi: 'वापसी व एक्सचेंज', mr: 'परतावा व बदल' },
+  'Expenses': { hi: 'दुकान खर्चे', mr: 'दुकानाचे खर्च' },
+  'Reports & Analytics': { hi: 'रिपोर्ट व हिसाब', mr: 'अहवाल व विश्लेषण' },
+  'Settings': { hi: 'दुकान सेटिंग्स', mr: 'दुकान सेटिंग' },
+  'Retail POS & Stock': { hi: 'कपड़ा बिलिंग व स्टॉक', mr: 'कापड बिलिंग व स्टॉक' },
+  'All Items': { hi: 'सभी कपड़े', mr: 'सर्व कपडे' },
+  'Search': { hi: 'खोजें', mr: 'शोधा' },
+  'Add': { hi: 'जोड़ें', mr: 'जोडा' },
+  'Add New': { hi: 'नया जोड़ें', mr: 'नवीन जोडा' },
+  'Save': { hi: 'सेव करें', mr: 'सेव्ह करा' },
+  'Cancel': { hi: 'रद्द करें', mr: 'रद्द करा' },
+  'Delete': { hi: 'हटाएं', mr: 'हटवा' },
+  'Edit': { hi: 'संशोधित करें', mr: 'बदला' },
+  'Close': { hi: 'बंद करें', mr: 'बंद करा' },
+  'Print': { hi: 'प्रिंट करें', mr: 'प्रिंट करा' },
+  'Download': { hi: 'डाउनलोड करें', mr: 'डाउनलोड करा' },
+  'Export': { hi: 'एक्सपोर्ट', mr: 'एक्सपोर्ट' },
+  'Import': { hi: 'इम्पोर्ट', mr: 'इम्पोर्ट' },
+  'Total': { hi: 'कुल', mr: 'एकूण' },
+  'Subtotal': { hi: 'सबटोटल', mr: 'एकूण रक्कम' },
+  'Quantity': { hi: 'मात्रा (Pcs)', mr: 'प्रमाण (Pcs)' },
+  'Qty': { hi: 'मात्रा', mr: 'प्रमाण' },
+  'Price': { hi: 'कीमत', mr: 'किंमत' },
+  'Discount': { hi: 'छूट', mr: 'सूट' },
+  'Final Payable': { hi: 'कुल देय राशि', mr: 'अंतिम देय रक्कम' },
+  'Cash Received': { hi: 'प्राप्त कैश', mr: 'मिळालेली रोख' },
+  'Payment Mode': { hi: 'भुगतान प्रकार', mr: 'पेमेंट प्रकार' },
+  'Cash': { hi: 'कैश', mr: 'रोख' },
+  'UPI': { hi: 'यूपीआई', mr: 'UPI' },
+  'Card': { hi: 'कार्ड', mr: 'कार्ड' },
+  'Split': { hi: 'स्प्लिट', mr: 'स्प्लिट' },
+  'Credit / Due': { hi: 'उधारी', mr: 'उधारी' },
+  'Customer': { hi: 'ग्राहक', mr: 'ग्राहक' },
+  'Mobile': { hi: 'मोबाइल', mr: 'मोबाईल' },
+  "Today's Sales": { hi: 'आज की कुल बिक्री', mr: 'आजची एकूण विक्री' },
+  "Today's Revenue": { hi: 'आज की आमदनी', mr: 'आजचे उत्पन्न' },
+  'Stock Report': { hi: 'स्टॉक रिपोर्ट', mr: 'स्टॉक अहवाल' },
+  'Sales Report': { hi: 'बिक्री रिपोर्ट', mr: 'विक्री अहवाल' },
+  'Profit Report': { hi: 'मुनाफा रिपोर्ट', mr: 'नफा अहवाल' },
 };
 
 interface LanguageContextType {
@@ -421,8 +393,8 @@ const STORAGE_KEY = 'tara_collection_language';
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved === 'hi' ? 'hi' : 'en'; // Default to English
+      const saved = localStorage.getItem(STORAGE_KEY) as Language;
+      return (saved === 'hi' || saved === 'mr' || saved === 'en') ? saved : 'en';
     } catch {
       return 'en';
     }
@@ -438,12 +410,14 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   };
 
   const toggleLanguage = () => {
-    setLanguage(language === 'en' ? 'hi' : 'en');
+    const cycle: Record<Language, Language> = { en: 'hi', hi: 'mr', mr: 'en' };
+    setLanguage(cycle[language]);
   };
 
   const tr = (text: string): string => {
-    if (language === 'hi') {
-      return HINDI_DICTIONARY[text] || text;
+    if (language === 'hi' || language === 'mr') {
+      const match = MULTILANG_DICTIONARY[text];
+      if (match) return match[language] || text;
     }
     return text;
   };
@@ -454,7 +428,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         language,
         setLanguage,
         toggleLanguage,
-        t: translations[language],
+        t: translations[language] || translations.en,
         tr,
       }}
     >
@@ -472,47 +446,42 @@ export const LanguageSelector: React.FC<{ className?: string; compact?: boolean 
   const { language, setLanguage } = useLanguage();
 
   if (compact) {
+    const nextLang: Record<Language, Language> = { en: 'hi', hi: 'mr', mr: 'en' };
+    const label: Record<Language, string> = { en: 'EN', hi: 'हिन्दी', mr: 'मराठी' };
+
     return (
       <button
         type="button"
-        onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-        className={`inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors shadow-sm select-none ${
-          language === 'hi'
+        onClick={() => setLanguage(nextLang[language])}
+        className={`inline-flex items-center space-x-1 px-2 py-0.5 rounded-lg text-xs font-bold border transition-colors shadow-xs select-none ${
+          language !== 'en'
             ? 'bg-amber-500/10 text-amber-600 border-amber-300 hover:bg-amber-500/20'
             : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
         } ${className}`}
-        title="Switch Language / भाषा बदलें"
+        title="Switch Language / भाषा बदला"
       >
         <span>🌐</span>
-        <span>{language === 'en' ? 'English' : 'हिन्दी'}</span>
+        <span>{label[language]}</span>
       </button>
     );
   }
 
   return (
     <div className={`inline-flex items-center p-0.5 rounded-lg border border-slate-200 bg-slate-100 select-none ${className}`}>
-      <button
-        type="button"
-        onClick={() => setLanguage('en')}
-        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-          language === 'en'
-            ? 'bg-white text-blue-700 shadow-sm'
-            : 'text-slate-600 hover:text-slate-900'
-        }`}
-      >
-        English
-      </button>
-      <button
-        type="button"
-        onClick={() => setLanguage('hi')}
-        className={`px-3 py-1 text-xs font-bold rounded-md transition-all ${
-          language === 'hi'
-            ? 'bg-white text-blue-700 shadow-sm'
-            : 'text-slate-600 hover:text-slate-900'
-        }`}
-      >
-        हिन्दी
-      </button>
+      {(['en', 'hi', 'mr'] as const).map((l) => (
+        <button
+          key={l}
+          type="button"
+          onClick={() => setLanguage(l)}
+          className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
+            language === l
+              ? 'bg-white text-blue-700 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          }`}
+        >
+          {l === 'en' ? 'English' : l === 'hi' ? 'हिन्दी' : 'मराठी'}
+        </button>
+      ))}
     </div>
   );
 };

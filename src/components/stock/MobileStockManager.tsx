@@ -23,9 +23,11 @@ import {
   RotateCcw,
   SlidersHorizontal,
   ChevronDown,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { exportToCSV } from '../../lib/csvExport';
 
 interface MobileStockManagerProps {
   currentUser: User;
@@ -206,6 +208,37 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
     reload();
   };
 
+  const handleExportCSV = () => {
+    const headers = [
+      'Product Name',
+      'Category',
+      'SKU',
+      'Barcode',
+      'Size',
+      'Color',
+      'Cost Price',
+      'Selling Price',
+      'MRP',
+      'Stock Qty',
+    ];
+    const rows = filteredProducts.flatMap((p) =>
+      p.variants.map((v) => [
+        p.name,
+        p.category,
+        v.sku,
+        v.barcode,
+        v.size,
+        v.color,
+        v.purchasePrice,
+        v.sellingPrice,
+        v.mrp,
+        v.stock,
+      ])
+    );
+    exportToCSV(`mobile_stock_${categoryFilter}_${new Date().toISOString().split('T')[0]}`, headers, rows);
+    toast.success('Stock exported to CSV');
+  };
+
   return (
     <div className="flex-1 flex flex-col bg-slate-50 min-h-0 select-none">
       {/* ================= TOP SEARCH & FILTER BAR ================= */}
@@ -231,6 +264,14 @@ export const MobileStockManager: React.FC<MobileStockManagerProps> = ({
               <span>{language === 'hi' ? "नया कपड़ा" : "Add Product"}</span>
             </button>
           )}
+
+          <button
+            onClick={handleExportCSV}
+            className="p-2 bg-slate-100 hover:bg-slate-200 active:scale-95 border border-slate-300 text-slate-700 rounded-xl flex items-center justify-center shrink-0 h-10 w-10"
+            title="Download Stock CSV"
+          >
+            <Download className="w-4 h-4 text-slate-700" />
+          </button>
         </div>
 
         {/* Category horizontal scroll chips */}

@@ -38,7 +38,9 @@ import {
   AlertCircle,
   X,
   Split,
+  Camera,
 } from 'lucide-react';
+import { CameraScannerModal } from './CameraScannerModal';
 import { toast } from 'sonner';
 import { ReceiptModal } from './ReceiptModal';
 import { SplitPaymentModal } from './SplitPaymentModal';
@@ -96,6 +98,26 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
   // Receipt Modal State
   const [finalizedSale, setFinalizedSale] = useState<Sale | null>(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const handleScannedBarcode = (code: string) => {
+    const trimmed = code.trim().toLowerCase();
+    for (const p of products) {
+      const exactVariant = p.variants.find(
+        (v) =>
+          v.barcode.toLowerCase() === trimmed ||
+          v.sku.toLowerCase() === trimmed ||
+          p.code.toLowerCase() === trimmed
+      );
+      if (exactVariant) {
+        addVariantToCart(p, exactVariant);
+        toast.success(`Scanned: ${p.name} (${exactVariant.size})`);
+        return;
+      }
+    }
+    setSearchQuery(code);
+    toast.info(`Search for: ${code}`);
+  };
 
   // Variant selector popover
   const [activeProductForVariant, setActiveProductForVariant] = useState<Product | null>(null);
@@ -597,6 +619,15 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
                 </button>
               )}
             </div>
+
+            <button
+              type="button"
+              onClick={() => setIsScannerOpen(true)}
+              className="p-2.5 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 shrink-0 flex items-center justify-center shadow-xs transition-all active:scale-95"
+              title="Scan Barcode with Camera"
+            >
+              <Camera className="w-4 h-4 text-blue-600" />
+            </button>
 
             <button
               type="button"
@@ -1258,6 +1289,13 @@ export const POSBilling: React.FC<POSBillingProps> = ({ currentUser, shopSetting
         sale={finalizedSale}
         settings={shopSettings}
         onNewBill={handleResetForNextBill}
+      />
+
+      {/* Camera Barcode Scanner Modal */}
+      <CameraScannerModal
+        isOpen={isScannerOpen}
+        onClose={() => setIsScannerOpen(false)}
+        onScan={handleScannedBarcode}
       />
     </div>
   );

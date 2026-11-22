@@ -16,7 +16,9 @@ import {
   Clock,
   ChevronRight,
   Filter,
+  Download,
 } from 'lucide-react';
+import { exportToCSV } from '../../lib/csvExport';
 import { toast } from 'sonner';
 import { ReceiptModal } from '../pos/ReceiptModal';
 import { generateWhatsAppMessage } from '../../lib/receipt';
@@ -77,7 +79,38 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
 
   const totalFilteredSalesAmount = filteredSales
     .filter((s) => s.status !== 'CANCELLED')
-    .reduce((acc, curr) => acc + curr.total, 0);
+    .reduce((acc, curr) => acc + (curr.finalPayable ?? (curr as any).total ?? 0), 0);
+
+  const handleExportCSV = () => {
+    const headers = [
+      'Bill Number',
+      'Date',
+      'Customer Name',
+      'Customer Mobile',
+      'Items Count',
+      'Subtotal',
+      'Discount',
+      'Final Payable',
+      'Payment Mode',
+      'Status',
+      'Cashier',
+    ];
+    const rows = filteredSales.map((s) => [
+      s.billNumber,
+      new Date(s.date).toLocaleString('en-IN'),
+      s.customerName || 'Walk-in',
+      s.customerMobile || '',
+      s.items.length,
+      s.totalOriginalAmount,
+      s.totalDiscount,
+      s.finalPayable,
+      s.paymentMode,
+      s.status,
+      s.cashierName,
+    ]);
+    exportToCSV(`mobile_sales_${dateFilter}_${new Date().toISOString().split('T')[0]}`, headers, rows);
+    toast.success('Bills exported to CSV');
+  };
 
   const handleCancelConfirm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,9 +220,19 @@ export const MobileSalesHistory: React.FC<MobileSalesHistoryProps> = ({
         {/* Summary Banner */}
         <div className="flex items-center justify-between px-3 py-1.5 bg-blue-50 border border-blue-100 rounded-xl text-xs text-blue-900 font-semibold">
           <span>{filteredSales.length} {language === 'hi' ? 'बिल मिले' : 'Bills found'}</span>
-          <span className="font-bold text-blue-700">
-            {t.totalSales} ₹{totalFilteredSalesAmount.toLocaleString('en-IN')}
-          </span>
+          <div className="flex items-center space-x-2">
+            <span className="font-bold text-blue-700">
+              {t.totalSales} ₹{totalFilteredSalesAmount.toLocaleString('en-IN')}
+            </span>
+            <button
+              onClick={handleExportCSV}
+              className="p-1 px-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[10px] font-bold flex items-center space-x-1"
+              title="Download CSV"
+            >
+              <Download className="w-3 h-3" />
+              <span>CSV</span>
+            </button>
+          </div>
         </div>
       </div>
 

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { exportToCSV } from '../../lib/csvExport';
 
 interface ReportsManagerProps {
   currentUser: User;
@@ -111,39 +112,55 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
   });
 
   // CSV Export
-  const exportToCSV = () => {
-    let csvContent = 'data:text/csv;charset=utf-8,';
+  const handleExportCSV = () => {
     if (reportTab === 'sales') {
-      csvContent += 'Bill Number,Date,Customer,Items,Subtotal,Discount,Final Payable,Payment Mode\n';
-      filteredSales.forEach((s) => {
-        csvContent += `"${s.billNumber}","${s.date}","${s.customerName || 'Walk-in'}",${
-          s.items.length
-        },${s.totalOriginalAmount},${s.totalDiscount},${s.finalPayable},"${s.paymentMode}"\n`;
-      });
+      const headers = ['Bill Number', 'Date', 'Customer', 'Items Count', 'Subtotal', 'Discount', 'Final Payable', 'Payment Mode'];
+      const rows = filteredSales.map((s) => [
+        s.billNumber,
+        new Date(s.date).toLocaleString('en-IN'),
+        s.customerName || 'Walk-in',
+        s.items.length,
+        s.totalOriginalAmount,
+        s.totalDiscount,
+        s.finalPayable,
+        s.paymentMode,
+      ]);
+      exportToCSV(`report_sales_${timeRange}`, headers, rows);
     } else if (reportTab === 'categories') {
-      csvContent += 'Category,Revenue,Quantity Sold,Discount Given\n';
-      Object.entries(categoryStats).forEach(([cat, stats]) => {
-        csvContent += `"${cat}",${stats.revenue.toFixed(2)},${stats.quantity},${stats.discount.toFixed(
-          2
-        )}\n`;
-      });
+      const headers = ['Category', 'Revenue (₹)', 'Quantity Sold (Pcs)', 'Discount Given (₹)'];
+      const rows = Object.entries(categoryStats).map(([cat, stats]) => [
+        cat,
+        stats.revenue.toFixed(2),
+        stats.quantity,
+        stats.discount.toFixed(2),
+      ]);
+      exportToCSV(`report_categories_${timeRange}`, headers, rows);
     } else if (reportTab === 'profit') {
-      csvContent += 'Metric,Amount (INR)\n';
-      csvContent += `"Sales Revenue",${totalRevenue.toFixed(2)}\n`;
-      csvContent += `"Cost of Goods Sold (COGS)",${totalCOGS.toFixed(2)}\n`;
-      csvContent += `"Gross Profit",${grossProfit.toFixed(2)}\n`;
-      csvContent += `"Operating Expenses",${totalExpenseVal.toFixed(2)}\n`;
-      csvContent += `"Net Operating Profit",${netOperatingProfit.toFixed(2)}\n`;
+      const headers = ['Metric', 'Amount (₹)'];
+      const rows = [
+        ['Sales Revenue', totalRevenue.toFixed(2)],
+        ['Cost of Goods Sold (COGS)', totalCOGS.toFixed(2)],
+        ['Gross Profit', grossProfit.toFixed(2)],
+        ['Operating Expenses', totalExpenseVal.toFixed(2)],
+        ['Net Operating Profit', netOperatingProfit.toFixed(2)],
+      ];
+      exportToCSV(`report_profit_${timeRange}`, headers, rows);
+    } else if (reportTab === 'inventory') {
+      const headers = ['Product', 'SKU', 'Category', 'Stock Qty', 'Cost Price', 'Selling Price', 'Total Stock Valuation'];
+      const rows = products.flatMap((p) =>
+        p.variants.map((v) => [
+          p.name,
+          v.sku,
+          p.category,
+          v.stock,
+          v.purchasePrice,
+          v.sellingPrice,
+          v.stock * v.purchasePrice,
+        ])
+      );
+      exportToCSV(`report_inventory_valuation`, headers, rows);
     }
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `tara_report_${reportTab}_${timeRange}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast.success('CSV Report exported');
+    toast.success('Report exported to CSV');
   };
 
   return (
@@ -189,7 +206,7 @@ export const ReportsManager: React.FC<ReportsManagerProps> = ({ currentUser, sho
           </div>
 
           <button
-            onClick={exportToCSV}
+            onClick={handleExportCSV}
             className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs transition-all"
           >
             <Download className="w-4 h-4" />

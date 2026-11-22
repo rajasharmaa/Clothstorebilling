@@ -13,7 +13,9 @@ import {
   FileSpreadsheet,
   AlertTriangle,
   RotateCcw,
+  Download,
 } from 'lucide-react';
+import { exportToCSV } from '../../lib/csvExport';
 import { toast } from 'sonner';
 import { ReceiptModal } from '../pos/ReceiptModal';
 import { generateWhatsAppMessage } from '../../lib/receipt';
@@ -134,6 +136,37 @@ export const SalesHistory: React.FC<SalesHistoryProps> = ({ currentUser, shopSet
     .filter((s) => s.status !== 'CANCELLED')
     .reduce((acc, s) => acc + s.balanceDue, 0);
 
+  const handleExportCSV = () => {
+    const headers = [
+      'Bill Number',
+      'Date',
+      'Customer Name',
+      'Customer Mobile',
+      'Items Count',
+      'Subtotal',
+      'Discount',
+      'Final Payable',
+      'Payment Mode',
+      'Status',
+      'Cashier',
+    ];
+    const rows = filteredSales.map((s) => [
+      s.billNumber,
+      new Date(s.date).toLocaleString('en-IN'),
+      s.customerName || 'Walk-in',
+      s.customerMobile || '',
+      s.items.length,
+      s.totalOriginalAmount,
+      s.totalDiscount,
+      s.finalPayable,
+      s.paymentMode,
+      s.status,
+      s.cashierName,
+    ]);
+    exportToCSV(`sales_bills_${new Date().toISOString().split('T')[0]}`, headers, rows);
+    toast.success('Sales history exported to CSV');
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 select-none">
       {/* Header Bar */}
@@ -172,6 +205,15 @@ export const SalesHistory: React.FC<SalesHistoryProps> = ({ currentUser, shopSet
               </div>
             </>
           )}
+
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center space-x-1 px-2.5 py-1 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-all ml-2"
+            title="Download CSV"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>CSV</span>
+          </button>
         </div>
       </div>
 

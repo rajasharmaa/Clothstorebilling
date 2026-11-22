@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Customer, User, ShopSettings } from '../../types';
 import { StorageService } from '../../lib/storage';
-import { Users, Plus, Search, Phone, MapPin, IndianRupee, Edit2, X, Clock } from 'lucide-react';
+import { Users, Plus, Search, Phone, MapPin, IndianRupee, Edit2, X, Clock, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useLanguage } from '../../lib/i18n';
+import { exportToCSV } from '../../lib/csvExport';
 
 interface CustomerManagerProps {
   currentUser: User;
@@ -53,6 +54,31 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, s
     reload();
   };
 
+  const handleExportCSV = () => {
+    const headers = [
+      'Customer Name',
+      'Mobile Number',
+      'Address',
+      'Customer Type',
+      'Total Bills',
+      'Total Purchases',
+      'Outstanding Due',
+      'Created Date',
+    ];
+    const rows = filtered.map((c) => [
+      c.name,
+      c.mobile,
+      c.address || '',
+      c.customerType,
+      c.totalBills,
+      c.totalPurchases,
+      c.outstandingDue,
+      new Date(c.createdAt).toLocaleDateString('en-IN'),
+    ]);
+    exportToCSV(`customers_khata_${new Date().toISOString().split('T')[0]}`, headers, rows);
+    toast.success('Customer Khata exported to CSV');
+  };
+
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 select-none">
       {/* Header Bar */}
@@ -71,13 +97,23 @@ export const CustomerManager: React.FC<CustomerManagerProps> = ({ currentUser, s
           </div>
         </div>
 
-        <button
-          onClick={handleOpenAdd}
-          className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
-        >
-          <Plus className="w-4 h-4" />
-          <span>{language === 'hi' ? 'नया ग्राहक जोड़ें' : 'Add Customer'}</span>
-        </button>
+        <div className="flex items-center space-x-2">
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center space-x-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs rounded-xl shadow-xs"
+            title="Download Customer Khata CSV"
+          >
+            <Download className="w-4 h-4" />
+            <span>CSV</span>
+          </button>
+          <button
+            onClick={handleOpenAdd}
+            className="flex items-center space-x-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/20"
+          >
+            <Plus className="w-4 h-4" />
+            <span>{language === 'hi' ? 'नया ग्राहक जोड़ें' : 'Add Customer'}</span>
+          </button>
+        </div>
       </div>
 
       {/* Toolbar */}

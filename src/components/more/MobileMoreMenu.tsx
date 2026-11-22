@@ -15,7 +15,12 @@ import {
   Phone,
   ShieldCheck,
   ChevronRight,
+  Database,
+  Download,
+  Upload,
 } from 'lucide-react';
+import { StorageService } from '../../lib/storage';
+import { toast } from 'sonner';
 import { ShopDashboard } from '../dashboard/ShopDashboard';
 import { PurchaseManager } from '../purchases/PurchaseManager';
 import { SupplierManager } from '../suppliers/SupplierManager';
@@ -56,6 +61,38 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
 }) => {
   const { t, language } = useLanguage();
   const [subView, setSubView] = useState<MoreSubView>(initialSubView);
+
+  const handleExportBackup = () => {
+    const json = StorageService.exportBackup();
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `tara_pos_backup_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(language === 'hi' ? 'डेटा बैकअप डाउनलोड हो गया' : 'Database backup downloaded');
+  };
+
+  const handleImportBackup = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (confirm(language === 'hi' ? 'बैकअप रिस्टोर करने से वर्तमान डेटा बदल जाएगा। क्या आप जारी रखना चाहते हैं?' : 'Importing will replace current data. Continue?')) {
+        const res = StorageService.importBackup(content);
+        if (res.success) {
+          toast.success(language === 'hi' ? 'डेटा सफलतापूर्वक रिस्टोर हुआ! ऐप रिलोड हो रहा है...' : 'Database restored! Reloading...');
+          setTimeout(() => window.location.reload(), 1000);
+        } else {
+          toast.error(res.error || 'Failed to parse backup');
+        }
+      }
+    };
+    reader.readAsText(file);
+  };
 
   const menuItems = [
     {
@@ -283,6 +320,35 @@ export const MobileMoreMenu: React.FC<MobileMoreMenuProps> = ({
             </button>
           );
         })}
+      </div>
+
+      {/* Quick Data Backup & Restore Card */}
+      <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs mb-4">
+        <div className="flex items-center space-x-2 mb-2.5">
+          <Database className="w-4 h-4 text-blue-600" />
+          <span className="font-extrabold text-xs text-slate-800">
+            {language === 'hi' ? 'डेटा बैकअप व रिस्टोर' : 'Data Backup & Restore'}
+          </span>
+        </div>
+        <p className="text-[11px] text-slate-500 mb-3">
+          {language === 'hi'
+            ? 'अपनी दुकान का पूरा बिलिंग व स्टॉक डेटा JSON फाइल में सुरक्षित करें।'
+            : 'Export or restore complete shop bills, inventory and customer database.'}
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleExportBackup}
+            className="flex items-center justify-center space-x-1.5 py-2 px-3 bg-blue-50 text-blue-700 font-bold text-xs rounded-xl border border-blue-200 hover:bg-blue-100 active:scale-95 transition-all"
+          >
+            <Download className="w-3.5 h-3.5" />
+            <span>{language === 'hi' ? 'डाउनलोड बैकअप' : 'Download Backup'}</span>
+          </button>
+          <label className="flex items-center justify-center space-x-1.5 py-2 px-3 bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 hover:bg-slate-100 active:scale-95 transition-all cursor-pointer">
+            <Upload className="w-3.5 h-3.5" />
+            <span>{language === 'hi' ? 'रिस्टोर बैकअप' : 'Restore Backup'}</span>
+            <input type="file" accept=".json" onChange={handleImportBackup} className="hidden" />
+          </label>
+        </div>
       </div>
 
       {/* Shop Info Footer Card */}
