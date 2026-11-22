@@ -577,10 +577,8 @@ export async function triggerPrint(
   // 2. Electron Silent Print (for Windows Desktop / Portable EXE)
   if (isElectron) {
     try {
-      const res = await (window as any).electronAPI.silentPrint({
-        html,
-        deviceName: '',
-      });
+      // Pass html string as first argument to avoid [object Object] coercion in Electron IPC
+      const res = await (window as any).electronAPI.silentPrint(html, '', paperWidth);
       if (res && res.success) return { success: true, message: 'Print sent to desktop printer!' };
     } catch (e) {
       console.warn('Electron silent print failed, falling back', e);

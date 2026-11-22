@@ -38,8 +38,32 @@ ipcMain.handle('get-printers', async () => {
 });
 
 // Silent print IPC
-ipcMain.handle('silent-print', async (event, { html, deviceName }) => {
-  console.log(`[Silent Print] Request received for printer: ${deviceName}`);
+ipcMain.handle('silent-print', async (event, payload, maybeDeviceName, maybePaperWidth) => {
+  let html = '';
+  let deviceName = '';
+  let paperWidth = '80mm';
+
+  if (typeof payload === 'string') {
+    html = payload;
+    deviceName = maybeDeviceName || '';
+    paperWidth = maybePaperWidth || '80mm';
+  } else if (payload && typeof payload === 'object') {
+    if (typeof payload.html === 'object' && payload.html !== null) {
+      html = payload.html.html || '';
+      deviceName = payload.html.deviceName || payload.deviceName || '';
+      paperWidth = payload.html.paperWidth || payload.paperWidth || '80mm';
+    } else {
+      html = payload.html || '';
+      deviceName = payload.deviceName || '';
+      paperWidth = payload.paperWidth || '80mm';
+    }
+  }
+
+  if (typeof html !== 'string') {
+    html = String(html || '');
+  }
+
+  console.log(`[Silent Print] Request received for printer: ${deviceName || 'Default'}, Paper: ${paperWidth}`);
   const printWindow = new BrowserWindow({
     show: false,
     webPreferences: {
@@ -54,19 +78,30 @@ ipcMain.handle('silent-print', async (event, { html, deviceName }) => {
     return new Promise((resolve) => {
       // Small delay to ensure styles are applied
       setTimeout(() => {
-        printWindow.webContents.print({
+        const isA4 = paperWidth === 'A4';
+        const is58 = paperWidth === '58mm';
+        const printOptions = {
           silent: true,
-          deviceName: deviceName,
           printBackground: true,
           color: false,
           margin: {
             marginType: 'none'
           },
-          pageSize: {
-            width: 58000,
-            height: 300000 // Increased height for longer receipts
-          }
-        }, (success, failureReason) => {
+          ...(isA4
+            ? { pageSize: 'A4' }
+            : {
+                pageSize: {
+                  width: is58 ? 58000 : 80000,
+                  height: 300000 // Increased height for longer receipts
+                }
+              })
+        };
+
+        if (deviceName && deviceName.trim()) {
+          printOptions.deviceName = deviceName.trim();
+        }
+
+        printWindow.webContents.print(printOptions, (success, failureReason) => {
           console.log(`[Silent Print] Result: ${success ? 'Success' : 'Failed'}. Reason: ${failureReason || 'None'}`);
           printWindow.close();
           if (!success) resolve({ success: false, error: failureReason });
